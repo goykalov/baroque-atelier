@@ -28,7 +28,7 @@ The Windows archive includes llama.cpp. For offline Qwen search, place **Qwen3 8
 | ![Interior rendered from Hall 01](docs/showcase/hall-01-interior.jpg) | ![Interior rendered from Hall 02](docs/showcase/hall-02-interior.jpg) |
 | [Ceiling view](docs/showcase/hall-01-ceiling.jpg) · [Recipe](examples/hall-01.recipe.json) | [Ceiling view](docs/showcase/hall-02-ceiling.jpg) · [Recipe](examples/hall-02.recipe.json) |
 
-These are Blender Cycles renders of meshes from the generator. Both halls were produced with blank briefs at the same **12 × 8.5 × 6.8 m** dimensions. The [showcase log](examples/showcase.json) records the generated architecture, seed, search passes, and original OBJ hash.
+The four gallery views are Blender Cycles renders of meshes from the generator. The cover is an ImageGen edit of the second hall's interior render. Both halls were produced with blank briefs at the same **12 × 8.5 × 6.8 m** dimensions. The [showcase log](examples/showcase.json) records the generated architecture, seed, search passes, and original OBJ hash.
 
 ## Project status
 
