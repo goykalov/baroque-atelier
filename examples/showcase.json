@@ -1,0 +1,76 @@
+[
+  {
+    "name": "hall-01",
+    "title": "Балдахины · лучистое переплетение",
+    "style": "bavarian",
+    "architecture": {
+      "walls": "canopy",
+      "ceiling": "star",
+      "order": 5,
+      "reach": 0.61,
+      "asymmetry": 0.65
+    },
+    "paintings": {
+      "p1": "wealth",
+      "p2": "counsel",
+      "p3": "monarchy"
+    },
+    "source": "architecture_qwen",
+    "recipe": "hall-01.recipe.json",
+    "seed": 599414442,
+    "sizes_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 5558676,
+    "search": {
+      "budget_s": 60,
+      "elapsed_s": 24.91,
+      "ai_passes": 1,
+      "valid_recipes": 23,
+      "selected": "architecture_qwen"
+    },
+    "obj_sha256": "68ffd18c07261f39e25474d4cdb95a8a8992216ad05eef9cf7a8d782ddcd1623",
+    "views": [
+      "docs/showcase/hall-01-interior.jpg",
+      "docs/showcase/hall-01-ceiling.jpg"
+    ]
+  },
+  {
+    "name": "hall-02",
+    "title": "Гротески · ребристый свод",
+    "style": "mexican",
+    "architecture": {
+      "walls": "grotto",
+      "ceiling": "rib_vault",
+      "order": 5,
+      "reach": 0.85,
+      "asymmetry": 0.37
+    },
+    "paintings": {
+      "p3": "apollo"
+    },
+    "source": "architecture_qwen",
+    "recipe": "hall-02.recipe.json",
+    "seed": 493667183,
+    "sizes_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 7356210,
+    "search": {
+      "budget_s": 600,
+      "elapsed_s": 107.9,
+      "ai_passes": 3,
+      "valid_recipes": 58,
+      "selected": "architecture_qwen"
+    },
+    "obj_sha256": "ab2d0a547bd7fe684bee5db2d7838875914d2d41d9dd60bc7a68cc89d550d46d",
+    "views": [
+      "docs/showcase/hall-02-interior.jpg",
+      "docs/showcase/hall-02-ceiling.jpg"
+    ]
+  }
+]

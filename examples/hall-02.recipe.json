@@ -1,0 +1,405 @@
+{
+  "version": 1,
+  "style": "mexican",
+  "seed": 493667183,
+  "source": "architecture_qwen",
+  "title": "Гротески · ребристый свод",
+  "layout": [
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p1",
+      "x": 0,
+      "y": -0.76,
+      "rx": 0.643299,
+      "ry": 0.182
+    },
+    {
+      "shape": "octagon",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "shell"
+      ],
+      "id": "p2",
+      "x": 0,
+      "y": -0.38,
+      "rx": 0.750853,
+      "ry": 0.182
+    },
+    {
+      "shape": "rect",
+      "motif": "shell",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p3",
+      "x": 0,
+      "y": 0.0,
+      "rx": 0.79,
+      "ry": 0.182
+    },
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p4",
+      "x": 0,
+      "y": 0.38,
+      "rx": 0.750853,
+      "ry": 0.182
+    },
+    {
+      "shape": "octagon",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "shell"
+      ],
+      "id": "p5",
+      "x": 0,
+      "y": 0.76,
+      "rx": 0.643299,
+      "ry": 0.182
+    }
+  ],
+  "curl": 0.84,
+  "foliage": 0.86,
+  "gilding": 0.73,
+  "wall_bays": 5,
+  "wall_rhythm": "uniform",
+  "wall_shape": "octagon",
+  "wall_motif": "sunburst",
+  "wall_elements": [
+    "scroll",
+    "beads",
+    "spray",
+    "fan"
+  ],
+  "program": {
+    "title": "Новоиспанская резьба · 493667183",
+    "curl": 0.84,
+    "foliage": 0.86,
+    "gilding": 0.73,
+    "wall_bays": 5,
+    "wall_rhythm": "uniform",
+    "wall": {
+      "shape": "octagon",
+      "motif": "sunburst",
+      "elements": [
+        "scroll",
+        "beads",
+        "spray",
+        "fan"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "octagon",
+        "motif": "flower",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "shell"
+        ]
+      },
+      "B": {
+        "shape": "arch",
+        "motif": "flower",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "fan"
+        ]
+      },
+      "C": {
+        "shape": "rect",
+        "motif": "shell",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "fan"
+        ]
+      }
+    },
+    "axis": "y",
+    "bands": [
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "C"
+          },
+          {
+            "weight": 3,
+            "type": "B"
+          },
+          {
+            "weight": 2,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 5,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "C"
+          },
+          {
+            "weight": 2,
+            "type": "A"
+          },
+          {
+            "weight": 2,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "C"
+          },
+          {
+            "weight": 3,
+            "type": "B"
+          },
+          {
+            "weight": 2,
+            "type": "C"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "",
+  "architecture": {
+    "walls": "grotto",
+    "ceiling": "rib_vault",
+    "order": 5,
+    "reach": 0.85,
+    "asymmetry": 0.37
+  },
+  "pattern": "banded",
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "fluted",
+    "tiers": 3,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 1.16,
+    "order": 4,
+    "rhythm": 0.37
+  },
+  "paintings": {
+    "p3": "apollo"
+  },
+  "export_note": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+  "input_seed": 493089096,
+  "search": {
+    "budget_s": 600,
+    "elapsed_s": 107.9,
+    "procedural_drafts": 72,
+    "valid_recipes": 58,
+    "ai_passes": 3,
+    "selected": "architecture_qwen",
+    "score": 0.851882,
+    "stop": "repeated_structures",
+    "trace": [
+      {
+        "phase": "proposal",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "canopy",
+          "ceiling": "rib_vault",
+          "layout": "diagonal"
+        },
+        "comment": "Сделано изменение на диагональную ось с выделяющимся куполом и ребристым потолком для создания динамики и визуального акцента в барочном зале.",
+        "score": 0.48329,
+        "seconds": 8.12
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "banded"
+        },
+        "comment": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+        "score": 0.851882,
+        "seconds": 12.85
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "cross"
+        },
+        "comment": "Изменен лайаут на пересечение, чтобы улучшить визуальную связь между элементами декора и структурой зала, а также создать более сбалансированное и динамичное пространство.",
+        "error": "Слишком узкое поле (1, 0). Сблизьте веса секций.",
+        "seconds": 10.05
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "gallery",
+          "ceiling": "rib_vault",
+          "layout": "banded"
+        },
+        "comment": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+        "score": 0.851882,
+        "seconds": 8.59
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "banded"
+        },
+        "comment": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.05
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "cross"
+        },
+        "comment": "Изменен лэйаут на перекрёстный, чтобы создать более сбалансированную и визуально привлекательную структуру, где элементы декора и архитектурные формы будут лучше взаимодействовать и формировать пространство в стиле барокко.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.59
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "gallery",
+          "ceiling": "rib_vault",
+          "layout": "banded"
+        },
+        "comment": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.99
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "banded"
+        },
+        "comment": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.57
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "cross"
+        },
+        "comment": "Изменен лайаут на крестообразный, чтобы улучшить визуальную связь между элементами декора и создать более сложную и динамичную композицию. Это помогает равномерно распределить пространство и усилить визуальное восприятие структурных элементов зала.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.57
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "gallery",
+          "ceiling": "rib_vault",
+          "layout": "banded"
+        },
+        "comment": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.7
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "banded"
+        },
+        "comment": "Изменен потолок на купол с балками, чтобы создать более динамичное и гармоничное соотношение между арками и пространством. Это улучшает визуальную связь между элементами декора и структурой зала.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.49
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "rib_vault",
+          "layout": "cross"
+        },
+        "comment": "Изменен лайаут на перекрестный, чтобы создать более сложную и динамичную структуру, улучшая визуальное восприятие и визуальную связь между элементами декора и архитектурой зала.",
+        "error": "Локальная модель повторила скелет композиции",
+        "seconds": 8.24
+      }
+    ]
+  },
+  "export": {
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.22,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_apollo": "baroque-fresco_apollo.jpg"
+    },
+    "vertices": 3734551,
+    "triangles": 7356210
+  }
+}

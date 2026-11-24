@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.gh.bak
+*.3dmbak
+*.log
+*.gguf
+*.obj
+*.mtl
+*.3dm
+*.zip
+.env
+.env.*
+/atelier/engine/
+/atelier/models/
+/atelier/Ателье · мои залы/
+/atelier/Мои залы/
+/dist/

@@ -1,0 +1,261 @@
+{
+  "version": 1,
+  "style": "bavarian",
+  "seed": 599414442,
+  "source": "architecture_qwen",
+  "title": "Балдахины · лучистое переплетение",
+  "layout": [
+    {
+      "shape": "lobed",
+      "motif": "sunburst",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p1",
+      "x": 0,
+      "y": 0,
+      "rx": 0.35575,
+      "ry": 0.31306
+    },
+    {
+      "shape": "oval",
+      "motif": "flower",
+      "elements": [
+        "beads",
+        "rosette"
+      ],
+      "id": "p2",
+      "x": 0.68,
+      "y": 0.0,
+      "rx": 0.1844,
+      "ry": 0.19135
+    },
+    {
+      "shape": "oval",
+      "motif": "flower",
+      "elements": [
+        "beads",
+        "rosette"
+      ],
+      "id": "p3",
+      "x": 0.0,
+      "y": 0.68,
+      "rx": 0.1844,
+      "ry": 0.19135
+    },
+    {
+      "shape": "oval",
+      "motif": "flower",
+      "elements": [
+        "beads",
+        "rosette"
+      ],
+      "id": "p4",
+      "x": -0.68,
+      "y": 0.0,
+      "rx": 0.1844,
+      "ry": 0.19135
+    },
+    {
+      "shape": "oval",
+      "motif": "flower",
+      "elements": [
+        "beads",
+        "rosette"
+      ],
+      "id": "p5",
+      "x": -0.0,
+      "y": -0.68,
+      "rx": 0.1844,
+      "ry": 0.19135
+    }
+  ],
+  "curl": 0.79,
+  "foliage": 0.99,
+  "gilding": 0.59,
+  "wall_bays": 4,
+  "wall_rhythm": "alternating",
+  "wall_shape": "arch",
+  "wall_motif": "vine",
+  "wall_elements": [
+    "scroll",
+    "beads",
+    "spray",
+    "fan"
+  ],
+  "program": {
+    "title": "Баварский рокайль · 599414442",
+    "curl": 0.79,
+    "foliage": 0.99,
+    "gilding": 0.59,
+    "wall_bays": 4,
+    "wall_rhythm": "alternating",
+    "wall": {
+      "shape": "arch",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "beads",
+        "spray",
+        "fan"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "lobed",
+        "motif": "sunburst",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "fan"
+        ]
+      },
+      "B": {
+        "shape": "oval",
+        "motif": "flower",
+        "elements": [
+          "beads",
+          "rosette"
+        ]
+      },
+      "C": {
+        "shape": "oval",
+        "motif": "flower",
+        "elements": [
+          "beads",
+          "rosette"
+        ]
+      }
+    },
+    "axis": "y",
+    "bands": [
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 7,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "C"
+          },
+          {
+            "weight": 2,
+            "type": "A"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "",
+  "architecture": {
+    "walls": "canopy",
+    "ceiling": "star",
+    "order": 5,
+    "reach": 0.61,
+    "asymmetry": 0.65
+  },
+  "pattern": "radial",
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "ribbed",
+    "tiers": 3,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 1.12,
+    "order": 4,
+    "rhythm": 0.65
+  },
+  "paintings": {
+    "p1": "wealth",
+    "p2": "counsel",
+    "p3": "monarchy"
+  },
+  "export_note": "Изменил пространственную структуру, создав радиальную композицию с куполом, чтобы подчеркнуть визуальную глубину и симметрию барокко.",
+  "input_seed": 599224386,
+  "search": {
+    "budget_s": 60,
+    "elapsed_s": 24.91,
+    "procedural_drafts": 24,
+    "valid_recipes": 23,
+    "ai_passes": 1,
+    "selected": "architecture_qwen",
+    "score": 0.604859,
+    "stop": "completed_passes",
+    "trace": [
+      {
+        "phase": "proposal",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "canopy",
+          "ceiling": "star",
+          "layout": "radial"
+        },
+        "comment": "Изменил пространственную структуру, создав радиальную композицию с куполом, чтобы подчеркнуть визуальную глубину и симметрию барокко.",
+        "score": 0.604859,
+        "seconds": 16.71
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "woven",
+          "layout": "banded"
+        },
+        "comment": "Изменил потолок на вплетённый, чтобы усилить связь между арками и волнообразной структурой, создавая более целостное визуальное восприятие.",
+        "error": "Слишком узкое поле (0, 0). Сблизьте веса секций.",
+        "seconds": 8.17
+      }
+    ]
+  },
+  "export": {
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.22,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_counsel": "baroque-fresco_counsel.jpg",
+      "fresco_monarchy": "baroque-fresco_monarchy.jpg",
+      "fresco_wealth": "baroque-fresco_wealth.jpg"
+    },
+    "vertices": 2823362,
+    "triangles": 5558676
+  }
+}
