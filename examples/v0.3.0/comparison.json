@@ -1,0 +1,62 @@
+{
+  "brief": "Светлый торжественный барочный зал с парными колоннами и ясным ритмом стен. На потолке крупный центральный плафон с живописью. Ветвящаяся глубокая лепнина из аканта обрамляет плафон. Оставь углы потолка свободными. Позолота умеренная.",
+  "seed": 724031,
+  "size_m": [
+    12,
+    8.5,
+    6.8
+  ],
+  "fast_v020_obj_identical": true,
+  "runs": [
+    {
+      "preset": "fast",
+      "budget_s": 60,
+      "elapsed_s": 30.85,
+      "geometry_passes": 0,
+      "stages": [],
+      "sculptures_added": 0,
+      "obj_sha256": "696eeaa924291f1e9d15c4ac9d30ca0eaa44afb92619e27a78c462b77a7e2b48",
+      "mesh_groups": 76,
+      "triangles": 5109220,
+      "local_refinement_proposals": 0,
+      "stages_selected_by_qwen": 0
+    },
+    {
+      "preset": "medium",
+      "budget_s": 600,
+      "elapsed_s": 55.83,
+      "geometry_passes": 3,
+      "stages": [
+        "frames",
+        "panels",
+        "figures"
+      ],
+      "sculptures_added": 3,
+      "obj_sha256": "8c7dccadf33d93b5aac59bb7034be313b5bf3d1fee6648d80f9d755d433b617a",
+      "mesh_groups": 85,
+      "triangles": 5986311,
+      "local_refinement_proposals": 6,
+      "stages_selected_by_qwen": 3
+    },
+    {
+      "preset": "hour",
+      "budget_s": 3600,
+      "elapsed_s": 98.38,
+      "geometry_passes": 6,
+      "stages": [
+        "frames",
+        "panels",
+        "figures",
+        "rims",
+        "frieze",
+        "figures_extra"
+      ],
+      "sculptures_added": 6,
+      "obj_sha256": "5a7fda3941abf0e77cfb2d9999aa06993cb1fcd1c25dd977d42e56c1be5573f9",
+      "mesh_groups": 95,
+      "triangles": 6956198,
+      "local_refinement_proposals": 12,
+      "stages_selected_by_qwen": 6
+    }
+  ]
+}

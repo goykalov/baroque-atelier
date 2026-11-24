@@ -88,7 +88,7 @@ def build():
     )
     planning = "\n".join(("_PALACE_ARCHITECTURE_RELEASE=True", script,
                           source("palace_auto.py"), source("palace_architecture.py"),
-                          source("palace_art.py"), source("palace_search.py"),
+                          source("palace_art.py"), source("palace_refinement.py"), source("palace_search.py"),
                           source("palace_controller.py")))
     author = python_node(doc, "Композиция зала", planning,
                           list(zip(("prompt","style","backend","trials","fresh","plan_length","plan_width","plan_height",
@@ -124,7 +124,7 @@ def build():
     with open(os.path.join(tool_dir, "PalaceBuffers.dll"), "rb") as f:
         buffers = base64.b64encode(f.read()).decode()
     geom = "\n".join(("import json", "_PALACE_ARCHITECTURE_RELEASE=True", "PALACE_DLL=" + repr(buffers), *(source(n) for n in (
-        "palace_ornament.py", "palace_branching.py", "palace_room.py", "palace_enrichment.py", "palace_sculpture.py",
+        "palace_ornament.py", "palace_branching.py", "palace_refinement.py", "palace_room.py", "palace_enrichment.py", "palace_sculpture.py",
         "palace_dense_walls.py", "palace_dense_ceiling.py", "palace_architecture.py", "palace_art.py", "palace_rhino.py", "palace_display.py",
     ))))
     display = python_node(doc, "Архитектура и резьба в Rhino", geom, items, "status", 687, 797, True)

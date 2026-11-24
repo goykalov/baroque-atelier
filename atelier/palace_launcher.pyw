@@ -276,7 +276,9 @@ class Workshop:
                 ceiling=plan.get("zones",{}).get("ceiling",plan)
                 source={"native":"Qwen","architecture_qwen":"композиция Qwen","architecture_rules":"автономная композиция","procedural_random":"случайная композиция",
                         "procedural_prompt":"автономные правила"}.get(selected,selected)
-                self.status.set(f"Сохранён {path.name} · полей {len(ceiling['layout'])} · {source} · {counts[1]:,} треугольников".replace(","," "))
+                layers=plan.get("search",{}).get("geometry_passes",0)
+                layers_text=f" · слоёв рельефа {layers}" if layers else ""
+                self.status.set(f"Сохранён {path.name} · полей {len(ceiling['layout'])} · {source}{layers_text} · {counts[1]:,} треугольников".replace(","," "))
         if self.busy:
             self.root.after(120,self.poll)
 

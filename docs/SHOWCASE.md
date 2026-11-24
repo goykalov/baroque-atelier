@@ -47,3 +47,11 @@ A local search with the 10-minute preset finished in 3 minutes 17 seconds. It co
 ![The revised baroque ceiling with the original arcaded walls](showcase/v0.2.0-ceiling.jpg)
 
 [Starting hall recipe](../examples/v0.2.0/before.recipe.json) · [Ceiling revision recipe](../examples/v0.2.0/after.recipe.json)
+
+## v0.3.0 · One hall across three budgets
+
+The three presets share the same composition and room dimensions. The medium preset adds three refinement stages. The hour preset adds six, including a second series of frames, friezes and sculpture groups. These are matched Blender views of the exported geometry.
+
+![One hall across the 1-minute, 10-minute and 1-hour presets](showcase/v0.3.0-quality.jpg)
+
+[Generation comparison](../examples/v0.3.0/comparison.json) · [Fast recipe](../examples/v0.3.0/fast.recipe.json) · [Medium recipe](../examples/v0.3.0/medium.recipe.json) · [Hour recipe](../examples/v0.3.0/hour.recipe.json)

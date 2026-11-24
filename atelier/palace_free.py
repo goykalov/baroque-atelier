@@ -12,6 +12,7 @@ from palace_plan import PALACE_PROFILES, _palace_compile, default_plan, generate
 from palace_auto import new_ultra_plan
 from palace_art import palace_art_paths, palace_uv
 from palace_search import architecture_checked, edit_hall_zone, hall_history_item, portal_checked, search_hall, validate_hall_layout
+from palace_refinement import refinement_checked
 from palace_room import ROOM_PALETTES, build_palace
 
 
@@ -198,6 +199,8 @@ def _recipe_from_json(plan, allow_zones=True):
         rebuilt["layout"]=validate_hall_layout(plan["layout"])
         if not set(rebuilt.get("paintings",{}))<={p["id"] for p in rebuilt["layout"]}:
             raise ValueError("Роспись ссылается на отсутствующее поле")
+    if "refinement" in plan:
+        rebuilt["refinement"]=refinement_checked(plan["refinement"],"hall" if allow_zones else "ceiling")
     if "zones" in plan:
         zones=plan["zones"]
         if not allow_zones or not isinstance(zones,dict) or set(zones)-{"ceiling","portal"}:

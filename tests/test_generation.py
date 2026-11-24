@@ -79,6 +79,36 @@ class GenerationTests(unittest.TestCase):
         self.assertEqual(plan["seed"], saved[0]["seed"])
         self.assertEqual(plan["search"]["valid_recipes"], 1)
 
+    def test_time_presets_preserve_base_and_add_real_geometry(self):
+        drafts = [recipe_roundtrip(search_hall(
+            prompt="Пышный зал, ветви аканта и свободные углы потолка",
+            seed=724031, backend="rules", size_m=SIZE_M, budget=limit
+        )) for limit in (60, 600, 3600)]
+        fast, middle, long = drafts
+        self.assertNotIn("refinement", fast)
+        for plan in (middle, long):
+            for key in ("seed", "architecture", "layout", "paintings", "wall_bays"):
+                self.assertEqual(plan[key], fast[key])
+        middle_layers, long_layers = [plan["refinement"]["stages"] for plan in (middle, long)]
+        self.assertEqual(len(middle_layers), 3)
+        self.assertEqual(len(long_layers), 6)
+        self.assertEqual(middle_layers, {key: long_layers[key] for key in middle_layers})
+        rooms = [build_palace(plan, (8000, 6500, 4600), detail=2, painting=plan["paintings"]) for plan in drafts]
+        for before, after in zip(rooms, rooms[1:]):
+            self.assertLess(len(before.parts), len(after.parts))
+            self.assertTrue(all(geometry == after.parts[key] for key, geometry in before.parts.items()))
+        self.assertTrue(any("Скульптурная консоль" in zone for zone, _ in rooms[1].parts))
+        self.assertTrue(any("Боковая скульптурная группа" in zone for zone, _ in rooms[2].parts))
+
+    def test_deep_local_edit_stays_inside_its_zone(self):
+        edited = recipe_roundtrip(edit_hall_zone(
+            self.base, "portal", PORTAL_BRIEF, seed=93, budget=3600, backend="rules", size_m=SIZE_M
+        ))
+        self.assertEqual(set(edited["zones"]["portal"]["refinement"]["stages"]), {"portal", "portal_extra"})
+        before, after = mesh(self.base), mesh(edited)
+        self.assertEqual({k: v for k, v in before.parts.items() if k[0] != CROWN},
+                         {k: v for k, v in after.parts.items() if k[0] != CROWN})
+
 
 if __name__ == "__main__":
     unittest.main()

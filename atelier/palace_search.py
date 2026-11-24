@@ -20,6 +20,7 @@ if "_palace_compile" not in globals():
     from palace_auto import _ultra_random_draft, _ultra_spec, _dense_tuning, _ultra_school
     from palace_architecture import ARCH_WALLS, ARCH_CEILINGS, ARCH_LABELS, HALL_SECTIONS
     from palace_art import assign_palace_paintings
+    from palace_refinement import refinement_checked, refine_hall
 
 
 HALL_LAYOUTS=("radial","procession","diagonal","islands","banded","cross")
@@ -258,6 +259,11 @@ def _hall_local_model(engine,model_file,label,brief,proposal,remaining,seed,cap,
         "islands are uneven clustered fields. Edit should briefly say in Russian what spatial change you made and why. "
         "Take user constraints seriously. Use numbers within the format. Return only JSON."
     )
+    return _hall_json_response(engine,model_file,label,instruction,brief,proposal,
+                               remaining,seed,cap,_hall_json_schema(exclude),finish)
+
+
+def _hall_json_response(engine,model_file,label,instruction,brief,proposal,remaining,seed,cap,schema,finish):
     def escape(value):
         return value.replace("<|im_", "< im_").replace("<think>", "< think >")
     text=("<|im_start|>system\n"+instruction+"<|im_end|>\n<|im_start|>user\n"
@@ -267,7 +273,7 @@ def _hall_local_model(engine,model_file,label,brief,proposal,remaining,seed,cap,
         root=Path(temp)
         inp,grammar=root/"brief.txt",root/"schema.json"
         inp.write_text(text,encoding="utf8")
-        grammar.write_text(json.dumps(_hall_json_schema(exclude)),encoding="utf8")
+        grammar.write_text(json.dumps(schema),encoding="utf8")
         cmd=[str(engine),"-m",str(model_file),"-f",str(inp),"-jf",str(grammar),
              "--no-conversation","--offline","--no-display-prompt","--simple-io","--no-escape",
              "--no-warmup","--color","off","-c","2560","-n","420","-ngl","auto",
@@ -293,9 +299,8 @@ def _hall_local_model(engine,model_file,label,brief,proposal,remaining,seed,cap,
     return json.JSONDecoder().raw_decode(body[start:])[0]
 
 
-def search_hall(prompt="",style="random",seed=None,previous=None,budget=60,history=(),
-                progress=None,backend="native",size_m=None,finish=None,checkpoint=None,scope="hall"):
-    """Explore room topology, then refine viable recipes within the selected budget."""
+def _search_hall_baseline(prompt,style,seed,previous,budget,history,progress,backend,size_m,finish,checkpoint,scope):
+    """Select the architectural composition with the original one-minute algorithm."""
     if budget not in HALL_BUDGETS:
         raise ValueError("Выберите 1, 10 или 60 минут")
     if backend not in ("native","rules") or scope not in HALL_SCOPES:
@@ -454,6 +459,41 @@ def search_hall(prompt="",style="random",seed=None,previous=None,budget=60,histo
     return result
 
 
+def search_hall(prompt="",style="random",seed=None,previous=None,budget=60,history=(),
+                progress=None,backend="native",size_m=None,finish=None,checkpoint=None,scope="hall"):
+    """Use the same composition in every preset, then spend extra time on its geometry."""
+    if budget not in HALL_BUDGETS:
+        raise ValueError("Выберите 1, 10 или 60 минут")
+    if budget==60:
+        return _search_hall_baseline(prompt,style,seed,previous,budget,history,progress,backend,
+                                     size_m,finish,checkpoint,scope)
+    started=time.monotonic()
+    finish=finish or (lambda:False)
+    progress=progress or (lambda message:None)
+
+    def emit(candidate):
+        if checkpoint:
+            report=dict(candidate["search"],budget_s=budget,elapsed_s=round(time.monotonic()-started,2),
+                        stop="in_progress")
+            checkpoint(dict(candidate,search=report))
+
+    base=_search_hall_baseline(prompt,style,seed,previous,60,history,progress,backend,
+                               size_m,finish,emit if checkpoint else None,scope)
+    engine=None
+    if backend=="native" and not finish() and base["search"]["stop"]!="model_unavailable":
+        try:
+            engine=_palace_native_files()
+        except (OSError,ValueError,RuntimeError):
+            pass
+
+    def propose(instruction,brief,context,remaining,proposal_seed,schema):
+        return _hall_json_response(*engine,"Qwen3 8B",instruction,brief,context,remaining,
+                                   proposal_seed,35,schema,finish)
+
+    return refine_hall(base,scope,size_m,budget,started,progress,finish,emit,
+                       propose if engine else None,prompt)
+
+
 def portal_checked(portal):
     if not isinstance(portal,dict) or type(portal.get("seed")) is not int:
         raise ValueError("Некорректный рецепт лепнины над дверью")
@@ -463,7 +503,10 @@ def portal_checked(portal):
         value=portal.get(key)
         if type(value) not in (float,int) or not low<=value<=high:
             raise ValueError("Недопустимый параметр портала: "+key)
-    return dict(portal)
+    result=dict(portal)
+    if "refinement" in result:
+        result["refinement"]=refinement_checked(result["refinement"],"portal")
+    return result
 
 
 def edit_hall_zone(plan,scope,prompt,*,checkpoint=None,**options):
@@ -495,6 +538,7 @@ def edit_hall_zone(plan,scope,prompt,*,checkpoint=None,**options):
                 "seed":candidate["seed"],"width":.68+.60*arch["reach"],
                 "relief":.72 if compact else .88+.36*arch["reach"],
                 "curl":candidate["curl"],"foliage":min(.28,candidate["foliage"]) if compact else candidate["foliage"],
+                **({"refinement":candidate["refinement"]} if candidate.get("refinement") else {}),
             })
         return dict(plan,zones=zones,zone_edit={"target":scope,"prompt":prompt},
                     title=plan["title"].split(" · Правка ")[0]+" · Правка "+title,

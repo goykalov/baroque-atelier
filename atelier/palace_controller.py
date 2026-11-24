@@ -79,7 +79,10 @@ if (start_new or start_edit) and not state["busy"]:
                 d.Modified()
                 report=result.get("search")
                 state["message"] = "Рецепт готов · " + result["title"]
-                if report:state["message"]+=" · Qwen: "+str(report["ai_passes"])+" проходов"
+                if report:
+                    state["message"]+=" · Qwen: "+str(report["ai_passes"])+" проходов"
+                    if report.get("geometry_passes"):
+                        state["message"]+=" · слоёв рельефа: "+str(report["geometry_passes"])
             except Exception as error:
                 state["message"] = "Ошибка · " + str(error)
             state["busy"] = False

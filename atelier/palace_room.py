@@ -3,6 +3,7 @@ import math
 from array import array
 if "decorate_panel" not in globals():
     from palace_ornament import decorate_panel, _PalacePanel
+    from palace_refinement import add_refined_ceiling, add_refined_portal, add_refined_walls
 
 
 ROOM_PALETTES = {
@@ -303,6 +304,8 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
                     panel_depth=max(.35,min(2., depth*portal["relief"]))
                     decorate_panel(g,"Портал · лепнина над дверью",_room_offset(f,x,H*.777),panel_width,H*.16,
                                    style,detail,panel_depth,portal["seed"],field)
+                    if portal.get("refinement"):
+                        add_refined_portal(g,portal,f,x,H*.777,panel_width,H*.16,style,detail,depth,field)
                 else:
                     field=dict(recipe,shape="lobed",motif=plan["wall_motif"],elements=plan["wall_elements"])
                     panel_zone="Портал · лепнина над дверью" if section else sub
@@ -375,6 +378,10 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
             else:
                 from palace_sculpture import place_palace_sculptures as statues
             statues(g,plan,(L,W,H),frames)
+    if plan.get("refinement"):
+        add_refined_walls(g,plan,(L,W,H),detail,depth,frames)
+    if ceiling.get("refinement"):
+        add_refined_ceiling(roof,ceiling,(L,W,H),detail,depth)
     if plan.get("architecture") or ceiling.get("architecture"):
         if "build_architecture" in globals():architecture=build_architecture
         else:

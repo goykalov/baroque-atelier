@@ -8,7 +8,7 @@
 
 ## Try the preview
 
-1. Download **baroque-atelier-v0.2.0-windows.zip** from the [v0.2.0 release](https://github.com/goykalov/baroque-atelier/releases/tag/v0.2.0) and extract it.
+1. Download **baroque-atelier-v0.3.0-windows.zip** from the [v0.3.0 release](https://github.com/goykalov/baroque-atelier/releases/tag/v0.3.0) and extract it.
 2. Launch **atelier/Start Atelier.cmd** for the standalone Windows interface. It uses Python 3.9+ with Tcl/Tk. For Rhino 9, open **atelier/Atelier.gh** in Grasshopper.
 3. Select a search budget and click **Найти новый зал**. A blank brief is enough. The interface currently uses Russian.
 
@@ -19,7 +19,7 @@ The Windows archive includes llama.cpp. For offline Qwen search, place **Qwen3 8
 - Room length, width, and height, or a rectangular closed room volume in Grasshopper.
 - A new combination of wall structure, bay count, wall cross-section, ceiling volume, and field layout at each search. The search compares recent architecture and spatial layouts.
 - Recursive acanthus relief, ornament depth, foliage, gilding, and museum paintings placed as ceiling textures.
-- Search budgets of up to **1 minute, 10 minutes, or 1 hour**. Longer searches add a second phase for refining ornament proportions and spacing. Use **Сохранить найденное** to finish with the best valid recipe found so far. Meshing and export follow the search.
+- Three generation budgets. **1 minute** selects the base composition. **10 minutes** can add carved ceiling accents, dado panels, and sculpture brackets. **1 hour** can add a second series of carved frames, friezes, and sculpture groups over the same room. The budgets are upper limits. Use **Сохранить найденное** to finish with the completed stages.
 - Prompt-driven edits to the **ceiling** or **relief above the door**. Choose a zone and click **Применить правку**. The other parts keep their geometry. In Rhino, matching parts also keep their object IDs.
 
 In the Windows app, open a saved recipe before editing. The current project supplies the dimensions and mesh settings for zone edits. During a search, the exporter saves a recoverable `.checkpoint.json` beside the target OBJ and removes it after a successful export.
@@ -30,4 +30,4 @@ Six halls generated locally at the same **12 × 8.5 × 6.8 m** dimensions. Each 
 
 ## Project status
 
-This is a Windows and Rhino 9 design preview. The output is polygonal concept geometry. The 1-minute and 10-minute modes were tested with local Qwen. The 1-hour preset was tested through early acceptance in Rhino. Detailed exports can be large. The original project code currently has no open-source license specified. The museum assets and third-party runtime have separate terms. [Attribution](docs/ATTRIBUTION.md)
+This is a Windows and Rhino 9 design preview. The output is polygonal concept geometry. All three presets were exercised with local Qwen. Detailed exports can be large. The original project code currently has no open-source license specified. The museum assets and third-party runtime have separate terms. [Attribution](docs/ATTRIBUTION.md)

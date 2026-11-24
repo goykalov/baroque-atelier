@@ -1,0 +1,342 @@
+{
+  "version": 1,
+  "style": "bavarian",
+  "seed": 937844,
+  "source": "architecture_qwen",
+  "title": "Гротески · гирлянды",
+  "layout": [
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "spray",
+        "rosette",
+        "beads"
+      ],
+      "id": "p1_2",
+      "x": -0.0,
+      "y": -0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "arch",
+      "motif": "shell",
+      "elements": [
+        "spray",
+        "shell",
+        "scroll"
+      ],
+      "id": "p2_2",
+      "x": -0.0,
+      "y": -0.0,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "spray",
+        "rosette",
+        "beads"
+      ],
+      "id": "p3_2",
+      "x": -0.0,
+      "y": 0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    }
+  ],
+  "curl": 0.8,
+  "foliage": 0.61,
+  "gilding": 0.34,
+  "wall_bays": 5,
+  "wall_rhythm": "alternating",
+  "wall_shape": "arch",
+  "wall_motif": "shell",
+  "wall_elements": [
+    "spray",
+    "shell",
+    "scroll"
+  ],
+  "program": {
+    "title": "Баварский рокайль · 937844",
+    "curl": 0.8,
+    "foliage": 0.61,
+    "gilding": 0.34,
+    "wall_bays": 5,
+    "wall_rhythm": "alternating",
+    "wall": {
+      "shape": "arch",
+      "motif": "shell",
+      "elements": [
+        "spray",
+        "shell",
+        "scroll"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "arch",
+        "motif": "shell",
+        "elements": [
+          "spray",
+          "shell",
+          "scroll"
+        ]
+      },
+      "B": {
+        "shape": "arch",
+        "motif": "vine",
+        "elements": [
+          "spray",
+          "scroll"
+        ]
+      },
+      "C": {
+        "shape": "arch",
+        "motif": "flower",
+        "elements": [
+          "spray",
+          "rosette",
+          "beads"
+        ]
+      }
+    },
+    "axis": "y",
+    "bands": [
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "void"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          },
+          {
+            "weight": 1,
+            "type": "void"
+          }
+        ]
+      },
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "void"
+          },
+          {
+            "weight": 1,
+            "type": "A"
+          },
+          {
+            "weight": 1,
+            "type": "void"
+          }
+        ]
+      },
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "void"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          },
+          {
+            "weight": 1,
+            "type": "void"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Светлый торжественный барочный зал с парными колоннами и ясным ритмом стен. На потолке крупный центральный плафон с живописью. Ветвящаяся глубокая лепнина из аканта обрамляет плафон. Оставь углы потолка свободными. Позолота умеренная.",
+  "attempts": 1,
+  "export": {
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.24,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_wealth": "baroque-fresco_wealth.jpg"
+    },
+    "vertices": 3534062,
+    "triangles": 6956198
+  },
+  "interpretation": [
+    "полей 3",
+    "пустые углы",
+    "arch"
+  ],
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "fluted",
+    "tiers": 3,
+    "lace": "fan",
+    "gold": true
+  },
+  "dense": {
+    "growth": 1.17,
+    "order": 4,
+    "rhythm": 0.36
+  },
+  "input_seed": 724031,
+  "search": {
+    "budget_s": 3600,
+    "elapsed_s": 98.38,
+    "procedural_drafts": 27,
+    "valid_recipes": 29,
+    "ai_passes": 2,
+    "selected": "architecture_qwen",
+    "score": 0.612203,
+    "stop": "completed_refinement",
+    "trace": [
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "garlands",
+          "section": "vertical",
+          "layout": "radial",
+          "bays": 5
+        },
+        "comment": "Поменял распределение боксов на радикальное, чтобы создать централизованное пространство с балансом и ясным ритмом стен. Это улучшает торжественность и освещение центрального плафона.",
+        "score": 0.612203,
+        "seconds": 7.97
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "diagonal",
+          "bays": 5
+        },
+        "comment": "Изменил расположение бай для более уравновешенного визуального ритма и добавил архитектурные акценты на диагональной оси, чтобы подчеркнуть торжественность пространства.",
+        "score": 0.569287,
+        "seconds": 8.41
+      }
+    ],
+    "geometry_passes": 6,
+    "refinement_trace": [
+      {
+        "stage": "frames",
+        "source": "qwen",
+        "proposals": 2,
+        "alternatives": 1,
+        "elapsed_s": 30.09
+      },
+      {
+        "stage": "panels",
+        "source": "qwen",
+        "proposals": 2,
+        "alternatives": 1,
+        "elapsed_s": 43.88
+      },
+      {
+        "stage": "figures",
+        "source": "qwen",
+        "proposals": 2,
+        "alternatives": 1,
+        "elapsed_s": 57.66
+      },
+      {
+        "stage": "rims",
+        "source": "qwen",
+        "proposals": 2,
+        "alternatives": 1,
+        "elapsed_s": 71.08
+      },
+      {
+        "stage": "frieze",
+        "source": "qwen",
+        "proposals": 2,
+        "alternatives": 1,
+        "elapsed_s": 84.19
+      },
+      {
+        "stage": "figures_extra",
+        "source": "qwen",
+        "proposals": 2,
+        "alternatives": 1,
+        "elapsed_s": 98.38
+      }
+    ]
+  },
+  "pattern": "radial",
+  "paintings": {
+    "p2_2": "wealth"
+  },
+  "architecture": {
+    "walls": "grotto",
+    "ceiling": "garlands",
+    "order": 5,
+    "section": "vertical",
+    "reach": 0.72,
+    "asymmetry": 0.36
+  },
+  "refinement": {
+    "version": 1,
+    "stages": {
+      "frames": {
+        "motif": "acanthus",
+        "count": 4,
+        "projection": 0.67,
+        "spread": 0.69
+      },
+      "panels": {
+        "motif": "acanthus",
+        "count": 4,
+        "projection": 0.67,
+        "spread": 0.69
+      },
+      "figures": {
+        "motif": "acanthus",
+        "count": 4,
+        "projection": 0.67,
+        "spread": 0.69
+      },
+      "rims": {
+        "motif": "acanthus",
+        "count": 5,
+        "projection": 0.84,
+        "spread": 0.78
+      },
+      "frieze": {
+        "motif": "acanthus",
+        "count": 5,
+        "projection": 0.84,
+        "spread": 0.78
+      },
+      "figures_extra": {
+        "motif": "acanthus",
+        "count": 5,
+        "projection": 0.84,
+        "spread": 0.78
+      }
+    }
+  }
+}
