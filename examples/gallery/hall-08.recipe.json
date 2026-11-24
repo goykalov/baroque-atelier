@@ -1,0 +1,354 @@
+{
+  "version": 1,
+  "style": "russian",
+  "seed": 866260506,
+  "source": "architecture_rules",
+  "title": "Экседры · гирлянды",
+  "layout": [
+    {
+      "shape": "oval",
+      "motif": "vine",
+      "elements": [
+        "spray",
+        "scroll"
+      ],
+      "id": "p1_1",
+      "x": -0.633333,
+      "y": -0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "lobed",
+      "motif": "flower",
+      "elements": [
+        "spray",
+        "rosette",
+        "beads"
+      ],
+      "id": "p1_2",
+      "x": -0.0,
+      "y": -0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "oval",
+      "motif": "vine",
+      "elements": [
+        "spray",
+        "scroll"
+      ],
+      "id": "p1_3",
+      "x": 0.633333,
+      "y": -0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "lobed",
+      "motif": "flower",
+      "elements": [
+        "spray",
+        "rosette",
+        "beads"
+      ],
+      "id": "p2_1",
+      "x": -0.633333,
+      "y": -0.0,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "arch",
+      "motif": "sunburst",
+      "elements": [
+        "spray",
+        "fan",
+        "scroll",
+        "beads"
+      ],
+      "id": "p2_2",
+      "x": -0.0,
+      "y": -0.0,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "lobed",
+      "motif": "flower",
+      "elements": [
+        "spray",
+        "rosette",
+        "beads"
+      ],
+      "id": "p2_3",
+      "x": 0.633333,
+      "y": -0.0,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "oval",
+      "motif": "vine",
+      "elements": [
+        "spray",
+        "scroll"
+      ],
+      "id": "p3_1",
+      "x": -0.633333,
+      "y": 0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "lobed",
+      "motif": "flower",
+      "elements": [
+        "spray",
+        "rosette",
+        "beads"
+      ],
+      "id": "p3_2",
+      "x": -0.0,
+      "y": 0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    },
+    {
+      "shape": "oval",
+      "motif": "vine",
+      "elements": [
+        "spray",
+        "scroll"
+      ],
+      "id": "p3_3",
+      "x": 0.633333,
+      "y": 0.633333,
+      "rx": 0.294667,
+      "ry": 0.294667
+    }
+  ],
+  "curl": 0.6,
+  "foliage": 0.7,
+  "gilding": 0.78,
+  "wall_bays": 4,
+  "wall_rhythm": "processional",
+  "wall_shape": "arch",
+  "wall_motif": "sunburst",
+  "wall_elements": [
+    "fan",
+    "scroll",
+    "beads"
+  ],
+  "program": {
+    "title": "Елизаветинский зал · 866260506",
+    "curl": 0.6,
+    "foliage": 0.7,
+    "gilding": 0.78,
+    "wall_bays": 4,
+    "wall_rhythm": "processional",
+    "wall": {
+      "shape": "arch",
+      "motif": "sunburst",
+      "elements": [
+        "fan",
+        "scroll",
+        "beads"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "arch",
+        "motif": "sunburst",
+        "elements": [
+          "spray",
+          "fan",
+          "scroll",
+          "beads"
+        ]
+      },
+      "B": {
+        "shape": "oval",
+        "motif": "vine",
+        "elements": [
+          "spray",
+          "scroll"
+        ]
+      },
+      "C": {
+        "shape": "lobed",
+        "motif": "flower",
+        "elements": [
+          "spray",
+          "rosette",
+          "beads"
+        ]
+      }
+    },
+    "axis": "y",
+    "bands": [
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "B"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          },
+          {
+            "weight": 1,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "C"
+          },
+          {
+            "weight": 1,
+            "type": "A"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "B"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          },
+          {
+            "weight": 1,
+            "type": "B"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Парадный дворцовый зал с выразительной центральной фигурой плафона. Лучи, связь центра с четырьмя углами и сложная ветвящаяся лепнина.",
+  "attempts": 1,
+  "interpretation": [
+    "полей 9",
+    "четыре угловые зоны"
+  ],
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "fluted",
+    "tiers": 2,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 1.28,
+    "order": 4,
+    "rhythm": 0.45
+  },
+  "input_seed": 866173397,
+  "search": {
+    "budget_s": 60,
+    "elapsed_s": 16.59,
+    "procedural_drafts": 24,
+    "valid_recipes": 16,
+    "ai_passes": 0,
+    "selected": "architecture_rules",
+    "score": 0.525855,
+    "stop": "completed_passes",
+    "trace": [
+      {
+        "phase": "layout",
+        "error": "Для четырёх отдельных угловых украшений нужны хотя бы четыре поля"
+      },
+      {
+        "phase": "layout",
+        "error": "Для четырёх отдельных угловых украшений нужны хотя бы четыре поля"
+      },
+      {
+        "phase": "proposal",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "shells",
+          "layout": "cross"
+        },
+        "comment": "Изменил расположение элементов, чтобы усилить визуальную связь между центральной фигурой плафона и углами зала. Это создает более динамичное и сбалансированное восприятие пространства.",
+        "error": "Для четырёх отдельных угловых украшений нужны хотя бы четыре поля",
+        "seconds": 7.91
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "alcoves",
+          "ceiling": "rib_vault",
+          "layout": "procession"
+        },
+        "comment": "Поменял потолок на купол с ребристыми сводами для усиления визуальной связи центральной фигуры плафона с углами зала. Это создает более сильную ось и улучшает визуальное равновесие между центральным элементом и периферией.",
+        "error": "Для четырёх отдельных угловых украшений нужны хотя бы четыре поля",
+        "seconds": 8.61
+      }
+    ]
+  },
+  "pattern": "procession",
+  "paintings": {
+    "p2_2": "monarchy",
+    "p1_2": "wealth"
+  },
+  "zone_tuning": {
+    "wall": {
+      "curl": 0.6,
+      "foliage": 0.7,
+      "gilding": 0.78
+    },
+    "ceiling": {
+      "curl": 0.6,
+      "foliage": 0.7,
+      "gilding": 0.78
+    }
+  },
+  "architecture": {
+    "walls": "alcoves",
+    "ceiling": "garlands",
+    "order": 5,
+    "reach": 0.85,
+    "asymmetry": 0.45
+  },
+  "export": {
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.24,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_monarchy": "baroque-fresco_monarchy.jpg",
+      "fresco_wealth": "baroque-fresco_wealth.jpg"
+    },
+    "vertices": 3165017,
+    "triangles": 6232214
+  }
+}

@@ -1,21 +1,41 @@
-# Two searches, one room envelope
+# Six baroque halls
 
-Two consecutive blank-brief searches generated these halls entirely on the local machine. Each uses a **12 × 8.5 × 6.8 m** envelope. The renderer imported the exported meshes, then applied editorial lighting, physically based materials, and cameras in Blender Cycles. The OBJ geometry is the same geometry used in the images.
+Six local searches used the same **12 × 8.5 × 6.8 m** room envelope. The gallery compares different wall structures and ceiling compositions. Each image starts from the exported 3D geometry rendered in Blender Cycles, then uses the same ImageGen finishing direction for window light, mineral plaster, aged gilding and wood grain.
 
-## Hall 01
+## 01 · Upper gallery and radial tracery
 
-![Hall 01 interior](showcase/hall-01-interior.jpg)
+![Upper gallery and radial tracery](showcase/hall-03.jpg)
 
-![Hall 01 ceiling](showcase/hall-01-ceiling.jpg)
+[Editable generation recipe](../examples/gallery/hall-03.recipe.json)
 
-[Rebuild this hall from its recipe](../examples/hall-01.recipe.json)
+## 02 · Arcades and interlaced vault
 
-## Hall 02
+![Arcades and interlaced vault](showcase/hall-04.jpg)
 
-![Hall 02 interior](showcase/hall-02-interior.jpg)
+[Editable generation recipe](../examples/gallery/hall-04.recipe.json)
 
-![Hall 02 ceiling](showcase/hall-02-ceiling.jpg)
+## 03 · Paired columns and scalloped relief
 
-[Rebuild this hall from its recipe](../examples/hall-02.recipe.json)
+![Paired columns and scalloped relief](showcase/hall-05.jpg)
 
-Both editable OBJ scenes, with materials and image textures, are included in **baroque-atelier-v0.1.0-sample-scenes.zip** on the [release page](https://github.com/goykalov/baroque-atelier/releases/tag/v0.1.0). [Generation log](../examples/showcase.json)
+[Editable generation recipe](../examples/gallery/hall-05.recipe.json)
+
+## 04 · Exedras and deep coffers
+
+![Exedras and deep coffers](showcase/hall-06.jpg)
+
+[Editable generation recipe](../examples/gallery/hall-06.recipe.json)
+
+## 05 · Paired columns and ribbed vault
+
+![Paired columns and ribbed vault](showcase/hall-07.jpg)
+
+[Editable generation recipe](../examples/gallery/hall-07.recipe.json)
+
+## 06 · Exedras and garlands
+
+![Exedras and garlands](showcase/hall-08.jpg)
+
+[Editable generation recipe](../examples/gallery/hall-08.recipe.json)
+
+The [generation log](../examples/gallery/gallery.json) records the briefs, selected wall and ceiling structures, seeds, search passes, and original OBJ hashes. The two original preview scenes are available as OBJ downloads in the [v0.1.0 release](https://github.com/goykalov/baroque-atelier/releases/tag/v0.1.0).

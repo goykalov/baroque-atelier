@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "style": "mexican",
+  "seed": 257177154,
+  "source": "architecture_qwen",
+  "title": "Экседры · глубокие кессоны",
+  "layout": [
+    {
+      "shape": "octagon",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p1",
+      "x": 0,
+      "y": 0,
+      "rx": 0.6248,
+      "ry": 0.443
+    },
+    {
+      "shape": "arch",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "rosette"
+      ],
+      "id": "p2",
+      "x": 0,
+      "y": -0.7228,
+      "rx": 0.523,
+      "ry": 0.2022
+    },
+    {
+      "shape": "arch",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "rosette"
+      ],
+      "id": "p3",
+      "x": 0,
+      "y": 0.7228,
+      "rx": 0.523,
+      "ry": 0.2022
+    }
+  ],
+  "curl": 0.92,
+  "foliage": 0.92,
+  "gilding": 0.92,
+  "wall_bays": 3,
+  "wall_rhythm": "alternating",
+  "wall_shape": "arch",
+  "wall_motif": "sunburst",
+  "wall_elements": [
+    "scroll",
+    "beads",
+    "spray",
+    "fan"
+  ],
+  "program": {
+    "title": "Новоиспанская резьба · 257177154",
+    "curl": 0.92,
+    "foliage": 0.92,
+    "gilding": 0.92,
+    "wall_bays": 3,
+    "wall_rhythm": "alternating",
+    "wall": {
+      "shape": "arch",
+      "motif": "sunburst",
+      "elements": [
+        "scroll",
+        "beads",
+        "spray",
+        "fan"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "octagon",
+        "motif": "vine",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "fan"
+        ]
+      },
+      "B": {
+        "shape": "arch",
+        "motif": "vine",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "rosette"
+        ]
+      },
+      "C": {
+        "shape": "rect",
+        "motif": "shell",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "rosette"
+        ]
+      }
+    },
+    "axis": "x",
+    "bands": [
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 4,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "C"
+          },
+          {
+            "weight": 2,
+            "type": "A"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "B"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Органический зал, похожий на декоративный грот. Криволинейные опоры, асимметричные орнаментальные острова и текучие линии в своде.",
+  "ultra": {
+    "paint": true,
+    "capital": "acanthus",
+    "pilaster": "tiered",
+    "tiers": 2,
+    "lace": "scroll",
+    "gold": true
+  },
+  "dense": {
+    "growth": 1.06,
+    "order": 3,
+    "rhythm": 0.27
+  },
+  "input_seed": 256979179,
+  "search": {
+    "budget_s": 60,
+    "elapsed_s": 16.61,
+    "procedural_drafts": 24,
+    "valid_recipes": 21,
+    "ai_passes": 1,
+    "selected": "architecture_qwen",
+    "score": 0.729017,
+    "stop": "completed_passes",
+    "trace": [
+      {
+        "phase": "proposal",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "grotto",
+          "ceiling": "shells",
+          "layout": "diagonal"
+        },
+        "comment": "Изменил планировку на диагональную для создания динамичного потока, что подчеркивает органический характер зала и усугубляет асимметрию пространства.",
+        "error": "Слишком узкое поле (0, 0). Сблизьте веса секций.",
+        "seconds": 8.16
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "alcoves",
+          "ceiling": "cassettes",
+          "layout": "procession"
+        },
+        "comment": "Изменил свод с garlands на cassettes, чтобы усилить визуальную структуру и создать более сбалансированное пространство. Это улучшает соотношение между элементами декора и основной архитектурной формой.",
+        "score": 0.729017,
+        "seconds": 8.41
+      }
+    ]
+  },
+  "pattern": "procession",
+  "paintings": {
+    "p1": "apollo",
+    "p2": "counsel",
+    "p3": "planets"
+  },
+  "architecture": {
+    "walls": "alcoves",
+    "ceiling": "cassettes",
+    "order": 3,
+    "reach": 0.82,
+    "asymmetry": 0.27
+  },
+  "export": {
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.24,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_apollo": "baroque-fresco_apollo.jpg",
+      "fresco_counsel": "baroque-fresco_counsel.jpg",
+      "fresco_planets": "baroque-fresco_planets.jpg"
+    },
+    "vertices": 2170302,
+    "triangles": 4271807
+  }
+}

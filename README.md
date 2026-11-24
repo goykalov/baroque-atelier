@@ -1,6 +1,6 @@
 # Baroque Atelier
 
-![Baroque Atelier — a photographed-style view of a generated hall](docs/showcase/cover.jpg)
+[![Six generated baroque halls](docs/showcase/cover.jpg)](docs/SHOWCASE.md)
 
 **Baroque Atelier is a local design tool for exploring baroque interiors inside a fixed room envelope.** Generate a hall with a blank brief or describe a direction, then tune the relief, branching, and room dimensions in Grasshopper. The desktop edition exports editable OBJ meshes, materials, and a JSON recipe.
 
@@ -21,14 +21,9 @@ The Windows archive includes llama.cpp. For offline Qwen search, place **Qwen3 8
 - Recursive acanthus relief, ornament depth, foliage, gilding, and museum paintings placed as ceiling textures.
 - Search budgets of up to **1 minute, 10 minutes, or 1 hour**. The offline model proposes and revises structured plans. Meshing and export follow the search.
 
-## Two fresh examples
+## Gallery
 
-| Hall 01 | Hall 02 |
-| --- | --- |
-| ![Interior rendered from Hall 01](docs/showcase/hall-01-interior.jpg) | ![Interior rendered from Hall 02](docs/showcase/hall-02-interior.jpg) |
-| [Ceiling view](docs/showcase/hall-01-ceiling.jpg) · [Recipe](examples/hall-01.recipe.json) | [Ceiling view](docs/showcase/hall-02-ceiling.jpg) · [Recipe](examples/hall-02.recipe.json) |
-
-The four gallery views are Blender Cycles renders of meshes from the generator. The cover is an ImageGen edit of the second hall's interior render. Both halls were produced with blank briefs at the same **12 × 8.5 × 6.8 m** dimensions. The [showcase log](examples/showcase.json) records the generated architecture, seed, search passes, and original OBJ hash.
+Six halls generated locally at the same **12 × 8.5 × 6.8 m** dimensions. Each frame starts from exported 3D geometry rendered in Blender Cycles, with photographic finishing in ImageGen. [Full-size views and generation recipes](docs/SHOWCASE.md)
 
 ## Project status
 

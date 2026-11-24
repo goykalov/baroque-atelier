@@ -1,0 +1,219 @@
+[
+  {
+    "id": "procession",
+    "prompt": "Торжественный осевой зал. Ритм аркад и продольная композиция потолка с глубокими рамами и живописью. Пусть лепнина объединяет опоры и потолок.",
+    "seed": 437807764,
+    "style": "russian",
+    "title": "Верхняя галерея · лучистое переплетение",
+    "architecture": {
+      "walls": "gallery",
+      "ceiling": "star",
+      "order": 4,
+      "reach": 0.51,
+      "asymmetry": 0.82
+    },
+    "paintings": {
+      "p2": "counsel"
+    },
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 5268130,
+    "source": "architecture_qwen",
+    "search": {
+      "budget_s": 60,
+      "elapsed_s": 19.59,
+      "ai_passes": 2,
+      "selected": "architecture_qwen"
+    },
+    "obj_sha256": "00fb9d2262785cabf32dfba8bd2a639c7c3d7df2f1efb6b89e7e2419ee89c82c",
+    "recipe": "hall-03.recipe.json",
+    "image": "hall-03.jpg",
+    "caption": "Upper gallery and radial tracery",
+    "finishing": "ImageGen light and material edit over Blender Cycles geometry render"
+  },
+  {
+    "id": "leaf",
+    "prompt": "Светлый камерный зал. Основная тема — тонкие веера раковин и ветвление аканта, с мягкими обрамлениями и широкими свободными полями.",
+    "seed": 964766416,
+    "style": "bavarian",
+    "title": "Аркада · плетёный свод",
+    "architecture": {
+      "walls": "arcade",
+      "ceiling": "woven",
+      "order": 4,
+      "reach": 0.64,
+      "asymmetry": 0.52
+    },
+    "paintings": {
+      "p1": "planets",
+      "p2": "wealth",
+      "p4": "monarchy"
+    },
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 6022210,
+    "source": "architecture_qwen",
+    "search": {
+      "budget_s": 60,
+      "elapsed_s": 16.9,
+      "ai_passes": 2,
+      "selected": "architecture_qwen"
+    },
+    "obj_sha256": "d3fec5d0585da0a845128ee93abbc680940f48ca5cae4e08b64484cf5793293f",
+    "recipe": "hall-04.recipe.json",
+    "image": "hall-04.jpg",
+    "caption": "Arcades and interlaced vault",
+    "finishing": "ImageGen light and material edit over Blender Cycles geometry render"
+  },
+  {
+    "id": "coffers",
+    "prompt": "Зал с верхним ярусом и глубоким кессонным потолком. Ритм малых ячеек переходит в крупные поля. Выразительные карнизы и узорная позолота.",
+    "seed": 899376787,
+    "style": "mexican",
+    "title": "Парные колонны · веерные раковины",
+    "architecture": {
+      "walls": "pilasters",
+      "ceiling": "shells",
+      "order": 4,
+      "reach": 0.72,
+      "asymmetry": 0.68
+    },
+    "paintings": {
+      "p1": "planets",
+      "p2": "counsel"
+    },
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 6193562,
+    "source": "architecture_qwen",
+    "search": {
+      "budget_s": 60,
+      "elapsed_s": 16.94,
+      "ai_passes": 2,
+      "selected": "architecture_qwen"
+    },
+    "obj_sha256": "9ef68168aad28eceab6e27a0bf654088085390733da4a6358001d003c4fe3d4c",
+    "recipe": "hall-05.recipe.json",
+    "image": "hall-05.jpg",
+    "caption": "Paired columns and scalloped relief",
+    "finishing": "ImageGen light and material edit over Blender Cycles geometry render"
+  },
+  {
+    "id": "grotto",
+    "prompt": "Органический зал, похожий на декоративный грот. Криволинейные опоры, асимметричные орнаментальные острова и текучие линии в своде.",
+    "seed": 257177154,
+    "style": "mexican",
+    "title": "Экседры · глубокие кессоны",
+    "architecture": {
+      "walls": "alcoves",
+      "ceiling": "cassettes",
+      "order": 3,
+      "reach": 0.82,
+      "asymmetry": 0.27
+    },
+    "paintings": {
+      "p1": "apollo",
+      "p2": "counsel",
+      "p3": "planets"
+    },
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 4271807,
+    "source": "architecture_qwen",
+    "search": {
+      "budget_s": 60,
+      "elapsed_s": 16.61,
+      "ai_passes": 1,
+      "selected": "architecture_qwen"
+    },
+    "obj_sha256": "889a9572416af0e25e43b6afdff0c918b0aa8c32ed54024db0ad4595f4fcb416",
+    "recipe": "hall-06.recipe.json",
+    "image": "hall-06.jpg",
+    "caption": "Exedras and deep coffers",
+    "finishing": "ImageGen light and material edit over Blender Cycles geometry render"
+  },
+  {
+    "id": "woven",
+    "prompt": "Барочный салон с плетёными пролётами и диагональным переплетением. Сделай потолок выразительным, стены — цельными, с ясным ритмом ниш.",
+    "seed": 197883657,
+    "style": "bavarian",
+    "title": "Парные колонны · ребристый свод",
+    "architecture": {
+      "walls": "pilasters",
+      "ceiling": "rib_vault",
+      "order": 4,
+      "reach": 0.64,
+      "asymmetry": 0.52
+    },
+    "paintings": {
+      "p1": "monarchy",
+      "p2": "wealth"
+    },
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 4905068,
+    "source": "architecture_qwen",
+    "search": {
+      "budget_s": 60,
+      "elapsed_s": 16.13,
+      "ai_passes": 1,
+      "selected": "architecture_qwen"
+    },
+    "obj_sha256": "9baf8f82c03a001273f25be4f5c29fb8c998d047347b6c5a5d50407123d05136",
+    "recipe": "hall-07.recipe.json",
+    "image": "hall-07.jpg",
+    "caption": "Paired columns and ribbed vault",
+    "finishing": "ImageGen light and material edit over Blender Cycles geometry render"
+  },
+  {
+    "id": "radiant",
+    "prompt": "Парадный дворцовый зал с выразительной центральной фигурой плафона. Лучи, связь центра с четырьмя углами и сложная ветвящаяся лепнина.",
+    "seed": 866260506,
+    "style": "russian",
+    "title": "Экседры · гирлянды",
+    "architecture": {
+      "walls": "alcoves",
+      "ceiling": "garlands",
+      "order": 5,
+      "reach": 0.85,
+      "asymmetry": 0.45
+    },
+    "paintings": {
+      "p2_2": "monarchy",
+      "p1_2": "wealth"
+    },
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "triangles": 6232214,
+    "source": "architecture_rules",
+    "search": {
+      "budget_s": 60,
+      "elapsed_s": 16.59,
+      "ai_passes": 0,
+      "selected": "architecture_rules"
+    },
+    "obj_sha256": "d7e9eefa42d4d638dc28be3e7a768e3a9afd1c5507e384bbdaf85fcd67b0d96e",
+    "recipe": "hall-08.recipe.json",
+    "image": "hall-08.jpg",
+    "caption": "Exedras and garlands",
+    "finishing": "ImageGen light and material edit over Blender Cycles geometry render"
+  }
+]

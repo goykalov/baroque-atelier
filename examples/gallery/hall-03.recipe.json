@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "style": "russian",
+  "seed": 437807764,
+  "source": "architecture_qwen",
+  "title": "Верхняя галерея · лучистое переплетение",
+  "layout": [
+    {
+      "shape": "lobed",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "shell"
+      ],
+      "id": "p1",
+      "x": 0,
+      "y": -0.7125,
+      "rx": 0.659691,
+      "ry": 0.2275
+    },
+    {
+      "shape": "rect",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "rosette"
+      ],
+      "id": "p2",
+      "x": 0,
+      "y": -0.2375,
+      "rx": 0.774506,
+      "ry": 0.2275
+    },
+    {
+      "shape": "oval",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p3",
+      "x": 0,
+      "y": 0.2375,
+      "rx": 0.774506,
+      "ry": 0.2275
+    },
+    {
+      "shape": "lobed",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "shell"
+      ],
+      "id": "p4",
+      "x": 0,
+      "y": 0.7125,
+      "rx": 0.659691,
+      "ry": 0.2275
+    }
+  ],
+  "curl": 0.7,
+  "foliage": 0.91,
+  "gilding": 0.89,
+  "wall_bays": 4,
+  "wall_rhythm": "processional",
+  "wall_shape": "lobed",
+  "wall_motif": "shell",
+  "wall_elements": [
+    "scroll",
+    "beads",
+    "spray",
+    "fan"
+  ],
+  "program": {
+    "title": "Елизаветинский зал · 437807764",
+    "curl": 0.7,
+    "foliage": 0.91,
+    "gilding": 0.89,
+    "wall_bays": 4,
+    "wall_rhythm": "processional",
+    "wall": {
+      "shape": "lobed",
+      "motif": "shell",
+      "elements": [
+        "scroll",
+        "beads",
+        "spray",
+        "fan"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "rect",
+        "motif": "flower",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "rosette"
+        ]
+      },
+      "B": {
+        "shape": "lobed",
+        "motif": "vine",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "shell"
+        ]
+      },
+      "C": {
+        "shape": "oval",
+        "motif": "flower",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "fan"
+        ]
+      }
+    },
+    "axis": "x",
+    "bands": [
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 3,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 7,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "C"
+          },
+          {
+            "weight": 4,
+            "type": "A"
+          },
+          {
+            "weight": 2,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 3,
+            "type": "B"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Торжественный осевой зал. Ритм аркад и продольная композиция потолка с глубокими рамами и живописью. Пусть лепнина объединяет опоры и потолок.",
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "tiered",
+    "tiers": 2,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 1.03,
+    "order": 4,
+    "rhythm": 0.82
+  },
+  "input_seed": 437609789,
+  "search": {
+    "budget_s": 60,
+    "elapsed_s": 19.59,
+    "procedural_drafts": 24,
+    "valid_recipes": 22,
+    "ai_passes": 2,
+    "selected": "architecture_qwen",
+    "score": 0.659176,
+    "stop": "completed_passes",
+    "trace": [
+      {
+        "phase": "proposal",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "layout": "procession"
+        },
+        "comment": "Изменил композицию на осевой зал с продольной ритмикой аркад и глубокими рамами на потолке. Это усиливает торжественность и связывает лепнью между опорами и потолком.",
+        "score": 0.576968,
+        "seconds": 7.97
+      },
+      {
+        "phase": "critique",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "gallery",
+          "ceiling": "star",
+          "layout": "banded"
+        },
+        "comment": "Сделано ради более динамичного и визуально интересного ритма в осевом зале. Связь между лепниной и элементами потолка усиливает гармонию пространства.",
+        "score": 0.659176,
+        "seconds": 11.59
+      }
+    ]
+  },
+  "pattern": "banded",
+  "paintings": {
+    "p2": "counsel"
+  },
+  "architecture": {
+    "walls": "gallery",
+    "ceiling": "star",
+    "order": 4,
+    "reach": 0.51,
+    "asymmetry": 0.82
+  },
+  "export": {
+    "size_m": [
+      12,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.24,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_counsel": "baroque-fresco_counsel.jpg"
+    },
+    "vertices": 2672947,
+    "triangles": 5268130
+  }
+}
