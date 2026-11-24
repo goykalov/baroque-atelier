@@ -1,0 +1,545 @@
+{
+  "version": 1,
+  "style": "bavarian",
+  "seed": 249923786,
+  "source": "architecture_qwen",
+  "title": "Аркада · ребристый свод",
+  "layout": [
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p1",
+      "x": -0.7125,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.659691
+    },
+    {
+      "shape": "lobed",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "rosette"
+      ],
+      "id": "p2",
+      "x": -0.2375,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.774506
+    },
+    {
+      "shape": "rect",
+      "motif": "shell",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "rosette"
+      ],
+      "id": "p3",
+      "x": 0.2375,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.774506
+    },
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p4",
+      "x": 0.7125,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.659691
+    }
+  ],
+  "curl": 0.82,
+  "foliage": 0.85,
+  "gilding": 0.59,
+  "wall_bays": 6,
+  "wall_rhythm": "uniform",
+  "wall_shape": "lobed",
+  "wall_motif": "vine",
+  "wall_elements": [
+    "scroll",
+    "beads",
+    "spray",
+    "fan"
+  ],
+  "program": {
+    "title": "Баварский рокайль · 249923786",
+    "curl": 0.82,
+    "foliage": 0.85,
+    "gilding": 0.59,
+    "wall_bays": 6,
+    "wall_rhythm": "uniform",
+    "wall": {
+      "shape": "lobed",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "beads",
+        "spray",
+        "fan"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "lobed",
+        "motif": "vine",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "rosette"
+        ]
+      },
+      "B": {
+        "shape": "arch",
+        "motif": "flower",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "fan"
+        ]
+      },
+      "C": {
+        "shape": "rect",
+        "motif": "shell",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "rosette"
+        ]
+      }
+    },
+    "axis": "x",
+    "bands": [
+      {
+        "weight": 3,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 6,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "C"
+          },
+          {
+            "weight": 2,
+            "type": "A"
+          },
+          {
+            "weight": 2,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 3,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Пышный барочный зал с мощным пространственным ритмом и выразительными разными уровнями, с витым акантом, золотыми капителями и росписью. Сделай стены архитектурно выразительными.",
+  "architecture": {
+    "walls": "arcade",
+    "ceiling": "rib_vault",
+    "order": 4,
+    "section": "vertical",
+    "reach": 0.84,
+    "asymmetry": 0.69
+  },
+  "pattern": "banded",
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "tiered",
+    "tiers": 2,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 0.98,
+    "order": 4,
+    "rhythm": 0.69
+  },
+  "paintings": {
+    "p2": "wealth",
+    "p3": "planets"
+  },
+  "export_note": "Изменил распределение боковых ярусов для создания пышного барочного эффекта с акантами и золотыми капителями. Увеличил симметрию и добавил роспись для визуального акцента.",
+  "input_seed": 249345699,
+  "search": {
+    "budget_s": 600,
+    "elapsed_s": 196.77,
+    "procedural_drafts": 96,
+    "valid_recipes": 95,
+    "ai_passes": 15,
+    "selected": "architecture_qwen",
+    "score": 0.686374,
+    "stop": "completed_passes",
+    "trace": [
+      {
+        "phase": "layout",
+        "error": "Слишком узкое поле (0, 0). Сблизьте веса секций."
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "woven",
+          "section": "tiered",
+          "layout": "radial",
+          "bays": 4
+        },
+        "comment": "Изменил распределение боксов на радиальном расположении для создания более динамичного пространственного ритма и улучшения визуальной структуры.",
+        "score": 0.607051,
+        "seconds": 17.31
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "radial",
+          "bays": 6
+        },
+        "comment": "Изменил распределение балконов на радиальное, чтобы создать визуальную глубину и динамику пространства. Это усиливает барочный характер с помощью симметрии и акцентов.",
+        "score": 0.608454,
+        "seconds": 8.33
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "diagonal",
+          "bays": 5
+        },
+        "comment": "Изменил распределение боксов на диагональную ось для создания динамичного пространственного ритма и визуального акцента на винтажном орнаменте.",
+        "score": 0.604846,
+        "seconds": 13.5
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "swept",
+          "layout": "cross",
+          "bays": 5
+        },
+        "comment": "Изменил распределение ярусов и добавил пересечение для более динамичного пространства",
+        "score": 0.631308,
+        "seconds": 7.94
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил распределение боковых ярусов для создания пышного барочного эффекта с акантами и золотыми капителями. Увеличил симметрию и добавил роспись для визуального акцента.",
+        "score": 0.686374,
+        "seconds": 8.43
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "shells",
+          "section": "tiered",
+          "layout": "procession",
+          "bays": 4
+        },
+        "comment": "Изменил распределение бай и добавил вертикальный раздел для акцента на высоту, чтобы усилить визуальный ритм и контраст между уровнями.",
+        "score": 0.637575,
+        "seconds": 8.17
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "radial",
+          "bays": 5
+        },
+        "comment": "Поменял распределение ярусов на радиальном плане для создания более динамичного пространственного ритма и визуального акцента на центральной оси.",
+        "score": 0.605921,
+        "seconds": 8.29
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "canopy",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил расположение галерей для усиления визуальной иерархии и улучшения масштаба орнамента. Это помогает сохранить сильные архитектурные элементы, создавая более выраженный барочный эффект.",
+        "score": 0.686374,
+        "seconds": 7.96
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "radial",
+          "bays": 6
+        },
+        "comment": "Изменил расположение аркад на радиальный, чтобы усилить визуальную глубину и создать централизованную акцентную точку, что улучшает иерархию и масштаб орнамента.",
+        "score": 0.609019,
+        "seconds": 8.62
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил расположение аркад для усиления вертикального акцента и улучшения иерархии фокуса, сохраняя выразительные архитектурные элементы.",
+        "score": 0.686374,
+        "seconds": 8.25
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил расположение аркад для усиления вертикальной структуры и улучшения иерархии фокусов. Это обеспечивает более выраженный барочный ритм и акцент на орнаментальных элементах.",
+        "error": "Модель повторила найденную композицию",
+        "seconds": 8.45
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "vertical",
+          "layout": "radial",
+          "bays": 6
+        },
+        "comment": "Изменено пространство для усиления фокальной иерархии и масштаба орнамента. Работа над рельефом и выразительностью архитектурных форм.",
+        "score": 0.609019,
+        "seconds": 8.16
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил расположение арки для улучшения иерархии фокуса и масштаба орнамента. Это укрепляет визуальную структуру и добавляет глубину пространству.",
+        "error": "Модель повторила найденную композицию",
+        "seconds": 8.31
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "canopy",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил расположение галереи на более централизованное, чтобы усилить визуальную иерархию и создать акцент на верхней части пространства. Это улучшает восприятие масштаба декора и рельефа.",
+        "score": 0.686374,
+        "seconds": 8.51
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "swept",
+          "layout": "radial",
+          "bays": 6
+        },
+        "comment": "Изменил расположение элементов на радиальном осевом фокусе для усиления пространственного ритма и визуальной иерархии. Это позволяет лучше выделить архитектурные детали и создать более динамичное восприятие пространства.",
+        "score": 0.609019,
+        "seconds": 8.81
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "radial",
+          "bays": 6
+        },
+        "comment": "Изменил раскладку на радиальную, чтобы усилить фокус и визуальную глубину, сохраняя сильные конструктивные элементы.",
+        "score": 0.609019,
+        "seconds": 8.12
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил расположение арки для улучшения фокусировки и масштаба орнамента. Это создает более выраженный барочный ритм.",
+        "error": "Модель повторила найденную композицию",
+        "seconds": 8.13
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил раскладку структурных арок и добавил глубину профилей для усиления визуального акцента на центральной оси. Это повысило ритм и выразительность пространства.",
+        "error": "Слишком узкое поле (0, 0). Сблизьте веса секций.",
+        "seconds": 7.9
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил расположение арочных проемов для усиления фокусировки на центральной оси и создания более выраженного визуального ритма.",
+        "error": "Модель повторила найденную композицию",
+        "seconds": 8.1
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "canopy",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил вертикальный ритм, чтобы усилить фокус на центральном пространстве и создать более выраженную иерархию. Это повысило визуальную глубину и акцент на декоративных элементах.",
+        "error": "Модель повторила найденную композицию",
+        "seconds": 8.52
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "rib_vault",
+          "section": "vertical",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Повысил визуальную иерархию и масштаб орнамента за счёт увеличения роста растительных мотивов и усиления рельефа. Это улучшает акцент на структурных элементах.",
+        "error": "Модель повторила найденную композицию",
+        "seconds": 7.95
+      },
+      {
+        "phase": "detail",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "banded",
+          "bays": 6
+        },
+        "comment": "Изменил структуру стен на арки, чтобы создать более динамичное пространство и усилить визуальную глубину. Это соответствует барочному стилю с акцентом на архитектурные формы и выразительные уровни.",
+        "score": 0.686374,
+        "seconds": 8.53
+      }
+    ]
+  },
+  "export": {
+    "size_m": [
+      12.0,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.24,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_planets": "baroque-fresco_planets.jpg",
+      "fresco_wealth": "baroque-fresco_wealth.jpg"
+    },
+    "vertices": 3595546,
+    "triangles": 7080315
+  }
+}

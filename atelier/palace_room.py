@@ -213,38 +213,45 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
     s=min(H/4900,min(L,W)/6200,1.45)
     ultra=plan.get("ultra")
     g=RoomMeshes(gilded=ultra is None or ultra["gold"]); style=plan["style"]
+    zones=plan.get("zones",{})
+    ceiling=zones.get("ceiling",plan)
+    portal=zones.get("portal")
+    ceiling_ultra=ceiling.get("ultra")
+    roof=g if ceiling is plan else RoomMeshes(gilded=ceiling_ultra is None or ceiling_ultra["gold"])
     detail=max(1,min(3,int(detail)))
     depth=max(.35,min(2.,float(relief)))
-    def tuning(zone):
-        recipe={k:plan[k] for k in ("curl","foliage","gilding")}
-        recipe.update(plan.get("zone_tuning",{}).get(zone,{}))
+    def tuning(zone, source):
+        source_ultra=source.get("ultra")
+        recipe={k:source[k] for k in ("curl","foliage","gilding")}
+        recipe.update(source.get("zone_tuning",{}).get(zone,{}))
         recipe["foliage"]=max(0.,min(1.,recipe["foliage"]+foliage_delta))
         recipe["gilding"]=max(0.,min(1.,recipe["gilding"]+gilding_delta))
-        if ultra:
-            recipe["ultra"]=ultra
-            if ultra["gold"]:
+        if source_ultra:
+            recipe["ultra"]=source_ultra
+            if source_ultra["gold"]:
                 recipe["gilding"]=max(.44 if style=="bavarian" else .63,recipe["gilding"])
         return recipe
-    recipe=tuning("ceiling")
+    recipe=tuning("ceiling",ceiling)
     _room_floor(g,L,W)
     a,b=L/2,W/2
     R=min(H*.115,min(a,b)*.15)
     top=_room_frame((0,0,H),(1,0,0),(0,-1,0),(0,0,-1))
-    _room_box(g,"body","Плафон",top,-a,a,-b,b,-100,0)
-    central=[p for p in plan["layout"] if abs(p["x"])<p["rx"] and abs(p["y"])<p["ry"]]
+    _room_box(roof,"body","Плафон",top,-a,a,-b,b,-100,0)
+    central=[p for p in ceiling["layout"] if abs(p["x"])<p["rx"] and abs(p["y"])<p["ry"]]
     paintings=painting if isinstance(painting,dict) else None
-    painted=max(central,key=lambda p:p["rx"]*p["ry"]) if paintings is None and painting and central and (not ultra or ultra["paint"]) else None
+    painted=max(central,key=lambda p:p["rx"]*p["ry"]) if paintings is None and painting and central and (not ceiling_ultra or ceiling_ultra["paint"]) else None
     painted_ids=set(paintings or ())|({painted["id"]} if painted else set())
-    for idx,p in enumerate(plan["layout"]):
+    for idx,p in enumerate(ceiling["layout"]):
         field=dict(recipe,**{k:p[k] for k in ("shape","motif","elements")})
         field["painted"]=p["id"] in painted_ids
         f=_room_offset(top,p["x"]*(a-R),p["y"]*(b-R),0)
-        decorate_panel(g,"Плафон "+p["id"],f,2*p["rx"]*(a-R),2*p["ry"]*(b-R),
-                       style,detail,depth,plan["seed"]+idx*31,field)
+        decorate_panel(roof,"Плафон "+p["id"],f,2*p["rx"]*(a-R),2*p["ry"]*(b-R),
+                       style,detail,depth,ceiling["seed"]+idx*31,field)
         if paintings and p["id"] in paintings:
             zone="Плафон "+p["id"]
-            g.parts[(zone,"fresco_"+paintings[p["id"]])]=g.parts.pop((zone,"fresco"))
-    recipe=tuning("wall")
+            roof.parts[(zone,"fresco_"+paintings[p["id"]])]=roof.parts.pop((zone,"fresco"))
+    recipe=tuning("wall",plan)
+    section=plan.get("architecture",{}).get("section")
     walls=[("Окна",L,(0,-b,0),(-1,0,0),(0,1,0)),("Восток",W,(a,0,0),(0,-1,0),(-1,0,0)),
            ("Зал",L,(0,b,0),(1,0,0),(0,-1,0)),("Портал",W,(-a,0,0),(0,1,0),(1,0,0))]
     frames=[]
@@ -290,14 +297,28 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
                 for off in (-1,1):
                     _room_box(g,"plaster",sub,f,x+off*door/2-27*s,x+off*door/2+27*s,0,dh+60*s,0,50*s)
                 _room_box(g,"gold",sub,f,x-door/2-56*s,x+door/2+56*s,dh,dh+46*s,0,67*s)
-                field=dict(recipe,shape="lobed",motif=plan["wall_motif"],elements=plan["wall_elements"])
-                decorate_panel(g,sub,_room_offset(f,x,H*.777),min(door*1.13,bay*.78),H*.16,
-                               style,detail,depth,plan["seed"]+900,field)
+                if portal:
+                    field=dict(recipe,**{key:portal[key] for key in ("shape","motif","elements","curl","foliage")})
+                    panel_width=min(door*1.13*portal["width"],bay*.82)
+                    panel_depth=max(.35,min(2., depth*portal["relief"]))
+                    decorate_panel(g,"Портал · лепнина над дверью",_room_offset(f,x,H*.777),panel_width,H*.16,
+                                   style,detail,panel_depth,portal["seed"],field)
+                else:
+                    field=dict(recipe,shape="lobed",motif=plan["wall_motif"],elements=plan["wall_elements"])
+                    panel_zone="Портал · лепнина над дверью" if section else sub
+                    decorate_panel(g,panel_zone,_room_offset(f,x,H*.777),min(door*1.13,bay*.78),H*.16,
+                                   style,detail,depth,plan["seed"]+900,field)
             else:
                 _room_box(g,"body",sub,f,cursor,end,0,H,-135*s,0)
                 field=dict(recipe,shape=plan["wall_shape"],motif=plan["wall_motif"],elements=plan["wall_elements"])
                 feature=plan.get("architecture",{}).get("walls")
                 prop={"alcoves":(.69,.48,.46),"gallery":(.83,.32,.34),"canopy":(.86,.43,.44),"grotto":(.84,.42,.40)}.get(feature,(.77,.57,.531))
+                if section=="vertical":
+                    prop=(prop[0]*.86,min(.58,prop[1]*1.15),max(.49,prop[2]))
+                elif section=="tiered":
+                    prop=(prop[0],prop[1]*.78,min(.38,prop[2]))
+                elif section=="swept":
+                    prop=(min(.90,prop[0]*1.10),prop[1]*.88,prop[2]+(.018 if j%2 else -.018))
                 decorate_panel(g,sub,_room_offset(f,x,H*prop[2]),bay*prop[0],H*prop[1],
                                style,detail,depth,plan["seed"]+i*19+j%2,field)
             if i!=3 or j!=n//2:
@@ -332,23 +353,33 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
         if "enrich_room" in globals():enrich=globals()["enrich_room"]
         else:
             from palace_enrichment import enrich_room as enrich
-        enrich(g,plan,(L,W,H),detail,depth,frames)
-    if plan.get("dense"):
+        enrich(g,plan,(L,W,H),detail,depth,frames,roof=roof,ceiling=ceiling)
+    elif roof is not g and ceiling_ultra and detail>=2:
+        if "_enrich_ceiling" in globals():
+            enrich_ceiling=globals()["_enrich_ceiling"]
+        else:
+            from palace_enrichment import _enrich_ceiling as enrich_ceiling
+        enrich_ceiling(roof,ceiling,(L,W,H),detail,depth,s,R)
+    if plan.get("dense") or ceiling.get("dense"):
         if "dense_walls" not in globals():
             from palace_dense_walls import dense_walls as add_walls
             from palace_dense_ceiling import dense_ceiling as add_ceiling
         else:
             add_walls,add_ceiling=dense_walls,dense_ceiling
-        add_walls(g,plan,(L,W,H),detail,depth,frames)
-        add_ceiling(g,plan,(L,W,H),detail,depth,painted_ids)
-        if detail>=2 and plan["dense"].get("figures",True):
+        if plan.get("dense"):
+            add_walls(g,plan,(L,W,H),detail,depth,frames)
+        if ceiling.get("dense"):
+            add_ceiling(roof,ceiling,(L,W,H),detail,depth,painted_ids)
+        if detail>=2 and plan.get("dense") and plan["dense"].get("figures",True):
             if "place_palace_sculptures" in globals():statues=place_palace_sculptures
             else:
                 from palace_sculpture import place_palace_sculptures as statues
             statues(g,plan,(L,W,H),frames)
-    if plan.get("architecture"):
+    if plan.get("architecture") or ceiling.get("architecture"):
         if "build_architecture" in globals():architecture=build_architecture
         else:
             from palace_architecture import build_architecture as architecture
-        architecture(g,plan,(L,W,H),detail,depth,frames,painted_ids)
+        architecture(g,plan,(L,W,H),detail,depth,frames,painted_ids,roof=roof,ceiling=ceiling)
+    if roof is not g:
+        g.parts.update(roof.parts)
     return g

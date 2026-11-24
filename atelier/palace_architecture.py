@@ -7,10 +7,12 @@ from array import array
 
 ARCH_WALLS=("arcade","pilasters","alcoves","gallery","canopy","grotto")
 ARCH_CEILINGS=("star","rib_vault","garlands","woven","shells","cassettes")
+HALL_SECTIONS=("vertical","tiered","swept")
 ARCH_LABELS={"arcade":"аркада","pilasters":"парные колонны","alcoves":"экседры",
              "gallery":"верхняя галерея","canopy":"балдахины","grotto":"гротески",
              "star":"лучистое переплетение","rib_vault":"ребристый свод","garlands":"гирлянды",
-             "woven":"плетёный свод","shells":"веерные раковины","cassettes":"глубокие кессоны"}
+             "woven":"плетёный свод","shells":"веерные раковины","cassettes":"глубокие кессоны",
+             "vertical":"высокий ордер","tiered":"ярусные стены","swept":"волнообразные стены"}
 
 
 def _architecture_imports():
@@ -56,6 +58,7 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
     L,W,H=size; arch=plan["architecture"]; style=plan["style"]
     s=min(H/4900,min(L,W)/6200,1.45)
     reach=arch["reach"]; hand=arch["asymmetry"]
+    section=arch.get("section")
     kind=arch["walls"]
     material="plaster" if style=="bavarian" else "gold"
     recipe={k:plan[k] for k in ("curl","foliage","gilding")}
@@ -66,7 +69,7 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
         if i==0:continue
         if kind=="gallery" and i==3:continue
         bays=list(bays_for(plan,i,span,s,size))
-        gallery_height=H*(.57+.032*reach)
+        gallery_height=H*({"vertical":.64,"tiered":.50,"swept":.55}.get(section,.57)+.032*reach)
         if kind=="gallery":
             zone=label+" · верхняя галерея"
             z=min(630*s,span*.12)
@@ -85,8 +88,10 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
             bay_width=wide*(.89 if portal else .73)
             richness=max(.25,recipe["foliage"])
             salt=rng.randrange(2**31)
+            rise=0 if portal else {"vertical":.058,"tiered":-.035,"swept":.030*math.cos(j*math.pi)}.get(section,0)
+            standing_height=H*rise
             if kind in ("arcade","pilasters","gallery"):
-                top=gallery_height-52*s if kind=="gallery" else H*(.66 if portal else .62+.075*reach)
+                top=gallery_height-52*s if kind=="gallery" else H*(.66 if portal else .62+.075*reach)+standing_height
                 depth=min(450*s,.13*wide)*(.52+.48*reach)
                 radius=min(118*s,bay_width*.09)
                 for side in (-1,1):
@@ -106,7 +111,7 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
                                            (x+bay_width*.56,top+height*s,depth)],thick*s,thick*s)
             elif kind=="alcoves":
                 # Inset arch shell projects onto the room side of the existing wall.
-                lo, spring=H*.22,H*(.60+.04*reach)
+                lo, spring=H*.22,H*(.60+.04*reach)+standing_height
                 rx,ry=bay_width*.45,min(H*.148,bay_width*.49)
                 z=min(480*s,.18*wide)
                 for side in (-1,1):
@@ -119,7 +124,7 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
                          for t in (u0,u1)])
                 draw_box(g,"gold",zone,f,x-rx*1.14,x+rx*1.14,lo-45*s,lo,0,z*.88)
             elif kind in ("canopy","grotto"):
-                ax=min(wide*.39,720*s); ay=H*(.50+.05*reach)
+                ax=min(wide*.39,720*s); ay=H*(.50+.05*reach)+standing_height
                 span_y=H*(.21+.04*reach)
                 projection=min(440*s,.16*wide)
                 for k in range(3+(arch["order"]>=5)):
@@ -293,9 +298,13 @@ def _architecture_ceiling(g,plan,size,detail,relief,painted):
             mould(g,"gold",ceiling_zone,model,[(x,y,z+17) for x,y,z in line],10+4*q,8)
 
 
-def build_architecture(g,plan,size,detail,relief,frames,painted=None):
-    spec=plan["architecture"]
-    if spec["walls"] not in ARCH_WALLS or spec["ceiling"] not in ARCH_CEILINGS:
-        raise ValueError("Неизвестная пространственная композиция")
-    _architecture_wall(g,plan,size,detail,relief,frames,random.Random(plan["seed"] ^ 279))
-    _architecture_ceiling(g,plan,size,detail,relief,painted)
+def build_architecture(g,plan,size,detail,relief,frames,painted=None,*,roof=None,ceiling=None):
+    ceiling=ceiling or plan
+    if plan.get("architecture"):
+        if plan["architecture"]["walls"] not in ARCH_WALLS:
+            raise ValueError("Неизвестная пространственная композиция стен")
+        _architecture_wall(g,plan,size,detail,relief,frames,random.Random(plan["seed"] ^ 279))
+    if ceiling.get("architecture"):
+        if ceiling["architecture"]["ceiling"] not in ARCH_CEILINGS:
+            raise ValueError("Неизвестная пространственная композиция потолка")
+        _architecture_ceiling(roof if roof is not None else g,ceiling,size,detail,relief,painted)

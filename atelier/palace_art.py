@@ -11,8 +11,9 @@ PALACE_ART={
 }
 
 
-def assign_palace_paintings(plan,count,previous=()):
-    count=min(count,len(PALACE_ART),len(plan["layout"]))
+def assign_palace_paintings(plan,count,previous=(),excluded=()):
+    fields=[field for field in plan["layout"] if field["id"] not in excluded]
+    count=min(count,len(PALACE_ART),len(fields))
     if count<=0 or not plan["ultra"]["paint"]:
         return {}
     rng=random.Random(plan["seed"] ^ 7391)
@@ -20,7 +21,7 @@ def assign_palace_paintings(plan,count,previous=()):
     rng.shuffle(unused)
     avoided=set(previous)
     unused.sort(key=lambda k:k in avoided)
-    ranked=sorted(plan["layout"],key=lambda p:p["rx"]*p["ry"]-.08*(p["x"]**2+p["y"]**2),reverse=True)
+    ranked=sorted(fields,key=lambda p:p["rx"]*p["ry"]-.08*(p["x"]**2+p["y"]**2),reverse=True)
     result={}
     for p in ranked[:count]:
         def fit(key):
@@ -37,7 +38,8 @@ def assign_palace_paintings(plan,count,previous=()):
 def palace_art_paths(plan,root):
     root=Path(root)
     resolved={}
-    for art in sorted(set(plan.get("paintings",{}).values())):
+    ceiling=plan.get("zones",{}).get("ceiling",plan)
+    for art in sorted(set(ceiling.get("paintings",{}).values())):
         if art not in PALACE_ART:
             raise ValueError("Неизвестная роспись в рецепте")
         path=root/PALACE_ART[art][1]

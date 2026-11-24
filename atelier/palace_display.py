@@ -13,13 +13,16 @@ def display_room():
     active = json.loads(str(archive)).get("plan")
     if active is None:
         return "Нажмите «Найти новый зал»" if "_PALACE_ARCHITECTURE_RELEASE" in globals() else "Нажмите «Новый ветвящийся зал»" if "growth_pct" in globals() else "Нажмите «Новый пышный зал»"
-    if active.get("dense") and "growth_pct" in globals():
-        options = dict(active["dense"])
-        if float(growth_pct) != 100.:
-            options["growth"] = max(.45, min(1.6, options["growth"]*float(growth_pct)/100))
-        if str(branch_levels) in ("3","4"):
-            options["order"] = int(branch_levels)
-        active = dict(active, dense=options)
+    ceiling = active.get("zones",{}).get("ceiling",active)
+    if "growth_pct" in globals():
+        for target in [active] if active is ceiling else [active,ceiling]:
+            if not target.get("dense"):
+                continue
+            options = target["dense"]
+            if float(growth_pct) != 100.:
+                options["growth"] = max(.45, min(1.6, options["growth"]*float(growth_pct)/100))
+            if str(branch_levels) in ("3","4"):
+                options["order"] = int(branch_levels)
     rd = Rhino.RhinoDoc.ActiveDoc
     if rd is None:
         raise ValueError("Откройте документ Rhino")
@@ -30,8 +33,8 @@ def display_room():
     scan = geometric_input(9)
     picture = os.path.join(os.path.dirname(doc.FilePath or ""), "fresco.jpg")
     paint_enabled=str(painting).lower()=="true"
-    if "paintings" in active:
-        painted=active["paintings"] if paint_enabled else {}
+    if "paintings" in ceiling:
+        painted=ceiling["paintings"] if paint_enabled else {}
         textures=palace_art_paths(active,os.path.dirname(doc.FilePath or "")) if paint_enabled else {}
     else:
         painted=paint_enabled and os.path.isfile(picture)
@@ -54,7 +57,7 @@ def display_room():
     if str(view).lower() == "true":
         palace_camera(rd, size, placement)
     count = sc.sticky[key][1]
-    return "{} · {} полей · {:,} треугольников".format(active["title"], len(active["layout"]), count).replace(",", " ")
+    return "{} · {} полей · {:,} треугольников".format(active["title"], len(ceiling["layout"]), count).replace(",", " ")
 
 
 try:

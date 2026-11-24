@@ -11,7 +11,7 @@ import tempfile
 from palace_plan import PALACE_PROFILES, _palace_compile, default_plan, generate_best
 from palace_auto import new_ultra_plan
 from palace_art import palace_art_paths, palace_uv
-from palace_search import architecture_checked, hall_history_item, search_hall, validate_hall_layout
+from palace_search import architecture_checked, edit_hall_zone, hall_history_item, portal_checked, search_hall, validate_hall_layout
 from palace_room import ROOM_PALETTES, build_palace
 
 
@@ -176,9 +176,12 @@ def _painting_source(path, src, saved_name):
 
 
 def read_recipe(path):
-    plan = json.loads(path.read_text(encoding="utf-8-sig"))
+    return _recipe_from_json(json.loads(path.read_text(encoding="utf-8-sig")))
+
+
+def _recipe_from_json(plan, allow_zones=True):
     rebuilt = _palace_compile(plan["program"],plan["style"],plan["seed"],plan["source"])
-    for k in ("model","prompt","seconds","attempts","export","selection","interpretation","repairs","ultra","dense","input_seed","search","pattern","paintings"):
+    for k in ("model","prompt","seconds","attempts","export","selection","interpretation","repairs","ultra","dense","input_seed","search","pattern","paintings","zone_edit"):
         if k in plan:
             rebuilt[k] = plan[k]
     if "zone_tuning" in plan:
@@ -189,12 +192,24 @@ def read_recipe(path):
         }
     if rebuilt["style"] not in PALACE_PROFILES:
         raise ValueError("Неизвестный регион в рецепте")
+    rebuilt["title"]=str(plan.get("title",rebuilt["title"]))[:120]
     if "architecture" in plan:
         rebuilt["architecture"]=architecture_checked(plan["architecture"])
         rebuilt["layout"]=validate_hall_layout(plan["layout"])
-        rebuilt["title"]=str(plan.get("title",rebuilt["title"]))[:120]
         if not set(rebuilt.get("paintings",{}))<={p["id"] for p in rebuilt["layout"]}:
             raise ValueError("Роспись ссылается на отсутствующее поле")
+    if "zones" in plan:
+        zones=plan["zones"]
+        if not allow_zones or not isinstance(zones,dict) or set(zones)-{"ceiling","portal"}:
+            raise ValueError("Некорректные зоны рецепта")
+        rebuilt["zones"]={}
+        if "ceiling" in zones:
+            ceiling=_recipe_from_json(zones["ceiling"],allow_zones=False)
+            if not ceiling.get("architecture") or ceiling["style"]!=rebuilt["style"]:
+                raise ValueError("Локальная правка потолка должна использовать материалы зала")
+            rebuilt["zones"]["ceiling"]=ceiling
+        if "portal" in zones:
+            rebuilt["zones"]["portal"]=portal_checked(zones["portal"])
     return rebuilt
 
 
@@ -231,11 +246,47 @@ def export(args, progress=None):
     plan = read_recipe(src) if src else None
     settings = plan.get("export",{}) if plan else {}
     budget=getattr(args,"budget",None)
+    scope=getattr(args,"scope","hall")
+    scoped=scope!="hall"
+    if scoped:
+        if plan is None or not args.prompt or not budget:
+            raise ValueError("Для правки зоны откройте рецепт, введите запрос и задайте время поиска")
+        args=argparse.Namespace(**vars(args))
+        for field in ("size","detail","relief","foliage","gilding","window_scan","window_material","painting","style"):
+            setattr(args,field,None)
+        args.no_scan=False
     dense=getattr(args,"dense",False) or bool(budget)
     ultra=getattr(args,"ultra",False) or dense
     style = args.style or (plan["style"] if plan else "random" if ultra else "bavarian")
     seed = args.seed if args.seed is not None else (plan["seed"] if plan else 1)
-    if budget and (not plan or args.prompt):
+    checkpoint_path=obj.with_suffix(".checkpoint.json")
+    checkpoint_written=False
+    def checkpoint(candidate):
+        nonlocal checkpoint_written
+        saved=dict(candidate,export=dict(settings,
+            size_m=tuple(args.size or settings.get("size_m",(12,8.5,6.8))),
+            detail=args.detail if args.detail is not None else settings.get("detail",3),
+            relief=args.relief if args.relief is not None else settings.get("relief",1.3),
+            foliage_delta=args.foliage if args.foliage is not None else settings.get("foliage_delta",0),
+            gilding_delta=args.gilding if args.gilding is not None else settings.get("gilding_delta",0),
+            painting=args.painting if getattr(args,"painting",None) is not None else settings.get("painting",True)))
+        if scoped and src.parent!=obj.parent and settings.get("window_scan"):
+            scan=(src.parent/settings["window_scan"]).resolve()
+            saved["export"]["window_scan"]=str(scan)
+        obj.parent.mkdir(parents=True,exist_ok=True)
+        with tempfile.NamedTemporaryFile("w",encoding="utf8",dir=obj.parent,prefix=".palace-checkpoint-",delete=False) as file:
+            temporary=Path(file.name)
+            json.dump(saved,file,ensure_ascii=False,indent=2)
+        try:
+            os.replace(temporary,checkpoint_path)
+            checkpoint_written=True
+        finally:
+            temporary.unlink(missing_ok=True)
+    if scoped:
+        plan=edit_hall_zone(plan,scope,args.prompt,seed=args.seed,budget=budget,progress=progress,backend=args.backend,
+                            size_m=tuple(settings.get("size_m",(12,8.5,6.8))),
+                            finish=getattr(args,"finish",None),checkpoint=checkpoint)
+    elif budget and (not plan or args.prompt):
         history=[]
         if src is None:
             candidates=list(obj.parent.glob("*.recipe.json"))
@@ -252,7 +303,7 @@ def export(args, progress=None):
                 if candidate not in history:history.append(candidate)
         targeted_size=tuple(args.size or settings.get("size_m",(12,8.5,6.8)))
         plan=search_hall(args.prompt,style,args.seed,plan,budget,history,progress,args.backend,targeted_size,
-                         finish=getattr(args,"finish",None))
+                         finish=getattr(args,"finish",None),checkpoint=checkpoint)
         style=plan["style"]
     elif ultra and (not plan or args.prompt):
         progress("Локальный подбор композиции")
@@ -289,9 +340,10 @@ def export(args, progress=None):
         raise ValueError("В палитре отсутствует материал наличника " + str(material))
     paint_setting=getattr(args,"painting",None)
     requested=settings.get("painting",True) if paint_setting is None else paint_setting
-    art=_painting_source(obj,src,settings.get("painting_texture")) if requested and plan.get("ultra",{}).get("paint",True) else None
+    ceiling=plan.get("zones",{}).get("ceiling",plan)
+    art=_painting_source(obj,src,settings.get("painting_texture")) if requested and ceiling.get("ultra",{}).get("paint",True) else None
     picked_art=palace_art_paths(plan,Path(__file__).resolve().parent) if requested and "paintings" in plan else {}
-    painting_geom=(plan["paintings"] if requested else {}) if "paintings" in plan else bool(art)
+    painting_geom=(ceiling["paintings"] if requested else {}) if "paintings" in ceiling else bool(art)
     progress("Построение комнаты и объёмной лепнины")
     asset = read_window_asset(scan) if scan else None
     room = build_palace(plan,tuple(v*1000 for v in size),detail,depth,foliage,gold,
@@ -338,12 +390,14 @@ def export(args, progress=None):
         write_materials(staging/mtl.name,ROOM_PALETTES[style],maps)
         saved = dict(plan,export=dict(size_m=size,detail=detail,relief=depth,
                     foliage_delta=foliage,gilding_delta=gold,window_scan=scan_ref,
-                    window_material=material,window_instances=len(room.windows),painting=bool(maps),
+                    window_material=material,window_instances=len(room.windows),painting=bool(requested),
                     painting_texture=texture.name if texture else None,
                     painting_textures=maps,
                     vertices=counts[0],triangles=counts[1]))
         (staging/recipe.name).write_text(json.dumps(saved,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
         _commit(staging,outputs)
+    if checkpoint_written:
+        checkpoint_path.unlink(missing_ok=True)
     return obj,counts
 
 
@@ -352,6 +406,8 @@ def main():
     parser.add_argument("--out",type=Path,default=Path("room.obj"),help="Путь к OBJ. Рядом сохраняются MTL и JSON.")
     parser.add_argument("--recipe",type=Path,help="Сохранённый рецепт комнаты в JSON.")
     parser.add_argument("--prompt",help="Описание комнаты или правка проекта с --recipe.")
+    parser.add_argument("--scope",choices=("hall","ceiling","portal"),default="hall",
+                        help="При правке рецепта ограничивает изменения потолком или лепниной над дверью.")
     parser.add_argument("--backend",choices=("rules","native"),default="rules",
                         help="rules — автономные правила, native — локальный запуск llama.cpp.")
     parser.add_argument("--drafts",type=int,choices=(1,2,3,4),default=3,help="Число быстрых схем для отбора по одному запросу.")

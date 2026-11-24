@@ -1,0 +1,556 @@
+{
+  "version": 1,
+  "style": "bavarian",
+  "seed": 249923786,
+  "source": "architecture_qwen",
+  "title": "Аркада · ребристый свод · Правка потолка",
+  "layout": [
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p1",
+      "x": -0.7125,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.659691
+    },
+    {
+      "shape": "lobed",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "rosette"
+      ],
+      "id": "p2",
+      "x": -0.2375,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.774506
+    },
+    {
+      "shape": "rect",
+      "motif": "shell",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "rosette"
+      ],
+      "id": "p3",
+      "x": 0.2375,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.774506
+    },
+    {
+      "shape": "arch",
+      "motif": "flower",
+      "elements": [
+        "scroll",
+        "spray",
+        "beads",
+        "fan"
+      ],
+      "id": "p4",
+      "x": 0.7125,
+      "y": 0,
+      "rx": 0.2275,
+      "ry": 0.659691
+    }
+  ],
+  "curl": 0.82,
+  "foliage": 0.85,
+  "gilding": 0.59,
+  "wall_bays": 6,
+  "wall_rhythm": "uniform",
+  "wall_shape": "lobed",
+  "wall_motif": "vine",
+  "wall_elements": [
+    "scroll",
+    "beads",
+    "spray",
+    "fan"
+  ],
+  "program": {
+    "title": "Баварский рокайль · 249923786",
+    "curl": 0.82,
+    "foliage": 0.85,
+    "gilding": 0.59,
+    "wall_bays": 6,
+    "wall_rhythm": "uniform",
+    "wall": {
+      "shape": "lobed",
+      "motif": "vine",
+      "elements": [
+        "scroll",
+        "beads",
+        "spray",
+        "fan"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "lobed",
+        "motif": "vine",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "rosette"
+        ]
+      },
+      "B": {
+        "shape": "arch",
+        "motif": "flower",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "fan"
+        ]
+      },
+      "C": {
+        "shape": "rect",
+        "motif": "shell",
+        "elements": [
+          "scroll",
+          "spray",
+          "beads",
+          "rosette"
+        ]
+      }
+    },
+    "axis": "x",
+    "bands": [
+      {
+        "weight": 3,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 6,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "C"
+          },
+          {
+            "weight": 2,
+            "type": "A"
+          },
+          {
+            "weight": 2,
+            "type": "C"
+          }
+        ]
+      },
+      {
+        "weight": 3,
+        "cells": [
+          {
+            "weight": 4,
+            "type": "B"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Пышный барочный зал с мощным пространственным ритмом и выразительными разными уровнями, с витым акантом, золотыми капителями и росписью. Сделай стены архитектурно выразительными.",
+  "export": {
+    "size_m": [
+      12.0,
+      8.5,
+      6.8
+    ],
+    "detail": 3,
+    "relief": 1.24,
+    "foliage_delta": 0,
+    "gilding_delta": 0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": true,
+    "painting_texture": null,
+    "painting_textures": {
+      "fresco_apollo": "baroque-fresco_apollo.jpg",
+      "fresco_counsel": "baroque-fresco_counsel.jpg",
+      "fresco_monarchy": "baroque-fresco_monarchy.jpg"
+    },
+    "vertices": 3610791,
+    "triangles": 7108277
+  },
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "tiered",
+    "tiers": 2,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 0.98,
+    "order": 4,
+    "rhythm": 0.69
+  },
+  "input_seed": 249345699,
+  "search": {
+    "budget_s": 60,
+    "elapsed_s": 16.73,
+    "procedural_drafts": 27,
+    "valid_recipes": 28,
+    "ai_passes": 1,
+    "selected": "architecture_qwen",
+    "score": 0.731884,
+    "stop": "completed_passes",
+    "trace": [
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "procession",
+          "bays": 5
+        },
+        "comment": "Оставил углы потолка пустыми, добавил лучистую розетку с глубоким рельефом и ветвящимся акантом, сделал три крупных живописных поля.",
+        "score": 0.731884,
+        "seconds": 8.16
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "procession",
+          "bays": 5
+        },
+        "comment": "Оставил углы потолка пустыми, создал центральную лучистую розетку с глубоким рельефом и ветвящимся акантом, добавил три крупных живописных поля для визуальной структуры и баланса.",
+        "error": "Модель повторила найденную композицию",
+        "seconds": 8.51
+      }
+    ]
+  },
+  "pattern": "banded",
+  "paintings": {
+    "p2": "wealth",
+    "p3": "planets"
+  },
+  "architecture": {
+    "walls": "arcade",
+    "ceiling": "rib_vault",
+    "order": 4,
+    "section": "vertical",
+    "reach": 0.84,
+    "asymmetry": 0.69
+  },
+  "zones": {
+    "ceiling": {
+      "version": 1,
+      "style": "bavarian",
+      "seed": 851249230,
+      "source": "architecture_qwen",
+      "title": "Аркада · лучистое переплетение",
+      "layout": [
+        {
+          "shape": "rect",
+          "motif": "sunburst",
+          "elements": [
+            "rosette",
+            "spray",
+            "scroll",
+            "beads"
+          ],
+          "id": "p1_2",
+          "x": -0.0,
+          "y": -0.633333,
+          "rx": 0.294667,
+          "ry": 0.294667
+        },
+        {
+          "shape": "rect",
+          "motif": "sunburst",
+          "elements": [
+            "rosette",
+            "spray",
+            "scroll",
+            "beads"
+          ],
+          "id": "p2_1",
+          "x": -0.633333,
+          "y": -0.0,
+          "rx": 0.294667,
+          "ry": 0.294667
+        },
+        {
+          "shape": "lobed",
+          "motif": "sunburst",
+          "elements": [
+            "rosette",
+            "spray",
+            "scroll",
+            "beads"
+          ],
+          "id": "p2_2",
+          "x": -0.0,
+          "y": -0.0,
+          "rx": 0.294667,
+          "ry": 0.294667
+        },
+        {
+          "shape": "rect",
+          "motif": "sunburst",
+          "elements": [
+            "rosette",
+            "spray",
+            "scroll",
+            "beads"
+          ],
+          "id": "p2_3",
+          "x": 0.633333,
+          "y": -0.0,
+          "rx": 0.294667,
+          "ry": 0.294667
+        },
+        {
+          "shape": "rect",
+          "motif": "sunburst",
+          "elements": [
+            "rosette",
+            "spray",
+            "scroll",
+            "beads"
+          ],
+          "id": "p3_2",
+          "x": -0.0,
+          "y": 0.633333,
+          "rx": 0.294667,
+          "ry": 0.294667
+        }
+      ],
+      "curl": 0.82,
+      "foliage": 0.85,
+      "gilding": 0.59,
+      "wall_bays": 5,
+      "wall_rhythm": "uniform",
+      "wall_shape": "lobed",
+      "wall_motif": "vine",
+      "wall_elements": [
+        "scroll",
+        "beads",
+        "spray",
+        "fan"
+      ],
+      "program": {
+        "title": "Баварский рокайль · 851249230",
+        "curl": 0.82,
+        "foliage": 0.85,
+        "gilding": 0.59,
+        "wall_bays": 5,
+        "wall_rhythm": "uniform",
+        "wall": {
+          "shape": "lobed",
+          "motif": "vine",
+          "elements": [
+            "scroll",
+            "beads",
+            "spray",
+            "fan"
+          ]
+        },
+        "palette": {
+          "A": {
+            "shape": "lobed",
+            "motif": "sunburst",
+            "elements": [
+              "rosette",
+              "spray",
+              "scroll",
+              "beads"
+            ]
+          },
+          "B": {
+            "shape": "arch",
+            "motif": "sunburst",
+            "elements": [
+              "rosette",
+              "spray",
+              "scroll",
+              "beads"
+            ]
+          },
+          "C": {
+            "shape": "rect",
+            "motif": "sunburst",
+            "elements": [
+              "rosette",
+              "spray",
+              "scroll",
+              "beads"
+            ]
+          }
+        },
+        "axis": "y",
+        "bands": [
+          {
+            "weight": 1,
+            "cells": [
+              {
+                "weight": 1,
+                "type": "void"
+              },
+              {
+                "weight": 1,
+                "type": "C"
+              },
+              {
+                "weight": 1,
+                "type": "void"
+              }
+            ]
+          },
+          {
+            "weight": 1,
+            "cells": [
+              {
+                "weight": 1,
+                "type": "C"
+              },
+              {
+                "weight": 1,
+                "type": "A"
+              },
+              {
+                "weight": 1,
+                "type": "C"
+              }
+            ]
+          },
+          {
+            "weight": 1,
+            "cells": [
+              {
+                "weight": 1,
+                "type": "void"
+              },
+              {
+                "weight": 1,
+                "type": "C"
+              },
+              {
+                "weight": 1,
+                "type": "void"
+              }
+            ]
+          }
+        ]
+      },
+      "zone_tuning": {
+        "wall": {
+          "curl": 0.82,
+          "foliage": 0.85,
+          "gilding": 0.59
+        },
+        "ceiling": {
+          "curl": 0.82,
+          "foliage": 0.85,
+          "gilding": 0.59
+        }
+      },
+      "prompt": "Оставь углы потолка пустыми. В центре сделай лучистую розетку с глубоким рельефом и ветвящимся акантом. Сделай три крупных живописных поля.",
+      "interpretation": [
+        "полей 5",
+        "пустые углы",
+        "sunburst"
+      ],
+      "attempts": 1,
+      "architecture": {
+        "walls": "arcade",
+        "ceiling": "star",
+        "order": 4,
+        "section": "swept",
+        "reach": 0.65,
+        "asymmetry": 0.76
+      },
+      "pattern": "procession",
+      "ultra": {
+        "paint": true,
+        "capital": "shell",
+        "pilaster": "tiered",
+        "tiers": 2,
+        "lace": "spray",
+        "gold": true
+      },
+      "dense": {
+        "growth": 1.22,
+        "order": 4,
+        "rhythm": 0.76
+      },
+      "paintings": {
+        "p1_2": "monarchy",
+        "p2_1": "counsel",
+        "p2_3": "apollo"
+      },
+      "export_note": "Оставил углы потолка пустыми, добавил лучистую розетку с глубоким рельефом и ветвящимся акантом, сделал три крупных живописных поля.",
+      "input_seed": 851035417,
+      "search": {
+        "budget_s": 60,
+        "elapsed_s": 16.73,
+        "procedural_drafts": 27,
+        "valid_recipes": 28,
+        "ai_passes": 1,
+        "selected": "architecture_qwen",
+        "score": 0.731884,
+        "stop": "completed_passes",
+        "trace": [
+          {
+            "phase": "structure",
+            "local_model": "Qwen3 8B",
+            "architecture": {
+              "walls": "arcade",
+              "ceiling": "star",
+              "section": "swept",
+              "layout": "procession",
+              "bays": 5
+            },
+            "comment": "Оставил углы потолка пустыми, добавил лучистую розетку с глубоким рельефом и ветвящимся акантом, сделал три крупных живописных поля.",
+            "score": 0.731884,
+            "seconds": 8.16
+          },
+          {
+            "phase": "structure",
+            "local_model": "Qwen3 8B",
+            "architecture": {
+              "walls": "arcade",
+              "ceiling": "star",
+              "section": "swept",
+              "layout": "procession",
+              "bays": 5
+            },
+            "comment": "Оставил углы потолка пустыми, создал центральную лучистую розетку с глубоким рельефом и ветвящимся акантом, добавил три крупных живописных поля для визуальной структуры и баланса.",
+            "error": "Модель повторила найденную композицию",
+            "seconds": 8.51
+          }
+        ]
+      }
+    }
+  },
+  "zone_edit": {
+    "target": "ceiling",
+    "prompt": "Оставь углы потолка пустыми. В центре сделай лучистую розетку с глубоким рельефом и ветвящимся акантом. Сделай три крупных живописных поля."
+  }
+}

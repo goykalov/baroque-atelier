@@ -76,7 +76,11 @@ def build():
     backend = menu("Режим", [("Qwen без сети", "native"), ("Автономные правила", "rules")], 55, 232)
     trials = menu("Время поиска", [("До 1 минуты","60"),("До 10 минут","600"),("До 1 часа","3600")],55,278)
     fresh = add(GH_ButtonObject(), "Найти новый зал", 55, 328)
-    group("Ателье барокко   ·   задание необязательно", (182, 134, 69), prompt, school, backend, trials, fresh)
+    stop = add(GH_ButtonObject(), "Сохранить найденное", 290, 328)
+    target = menu("Зона правки", [("Только потолок","ceiling"),("Лепнина над дверью","portal")], 55, 381)
+    edit = add(GH_ButtonObject(), "Применить правку", 290, 381)
+    group("Ателье барокко   ·   задание необязательно", (182, 134, 69),
+          prompt, school, backend, trials, fresh, stop, target, edit)
 
     script = source("palace_plan.py").replace(
         "base = Path(__file__).resolve().parent",
@@ -87,8 +91,9 @@ def build():
                           source("palace_art.py"), source("palace_search.py"),
                           source("palace_controller.py")))
     author = python_node(doc, "Композиция зала", planning,
-                          list(zip(("prompt","style","backend","trials","fresh","plan_length","plan_width","plan_height"),
-                                   (prompt,school,backend,trials,fresh,None,None,None))), "status", 637, 162, True)
+                          list(zip(("prompt","style","backend","trials","fresh","plan_length","plan_width","plan_height",
+                                    "edit_scope","edit_zone","finish_search"),
+                                   (prompt,school,backend,trials,fresh,None,None,None,target,edit,stop))), "status", 637, 162, True)
     panel("Генерация", "", 834, 127, 365, 66, author.Params.Output[0])
     archive = panel("Рецепт текущего зала", json.dumps({"plan": None}), 55, 790, 350, 58)
 

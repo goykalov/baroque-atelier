@@ -8,7 +8,14 @@ doc = node.OnPingDocument()
 state = sc.sticky.setdefault(("palace-ultra-editor", doc.RuntimeID, str(node.InstanceGuid)),
                              {"pressed": False, "busy": False, "message": "Готово к работе"})
 down = str(fresh).lower() == "true"
-if down and not state["pressed"] and not state["busy"]:
+edit_down = str(globals().get("edit_zone","")).lower() == "true"
+finish_down = str(globals().get("finish_search","")).lower() == "true"
+if finish_down and not state.get("finish_pressed") and state["busy"]:
+    state["finish"].set()
+    state["message"]="Выбран лучший найденный вариант"
+start_new=down and not state["pressed"]
+start_edit=edit_down and not state.get("edit_pressed") and not start_new
+if (start_new or start_edit) and not state["busy"]:
     shelf = next(o for o in doc.Objects if o.NickName == "Рецепт текущего зала")
     saved = shelf.UserText
     previous = json.loads(saved).get("plan")
@@ -22,14 +29,22 @@ if down and not state["pressed"] and not state["busy"]:
     measurements=(float(plan_length)/1000,float(plan_width)/1000,float(plan_height)/1000) if "plan_length" in globals() else None
     # The single button starts a fresh composition even when prompt and style stay fixed.
     done = threading.Event()
+    finish_signal = threading.Event()
     outcome = {}
-    state.update(busy=True, message="Подбирается новая композиция")
+    target=str(globals().get("edit_scope","ceiling")) if start_edit else "hall"
+    state.update(busy=True, finish=finish_signal, message="Подбирается композиция")
 
     def work():
         try:
             if atelier:
-                outcome["plan"]=search_hall(text,school,budget=count,history=history,backend=engine,
-                                             size_m=measurements,progress=lambda msg:outcome.update(progress=msg))
+                options=dict(budget=count,backend=engine,size_m=measurements,finish=finish_signal.is_set,
+                             progress=lambda msg:outcome.update(progress=msg))
+                if target=="hall":
+                    outcome["plan"]=search_hall(text,school,history=history,**options)
+                else:
+                    if previous is None:
+                        raise ValueError("Сначала создайте зал кнопкой «Найти новый зал»")
+                    outcome["plan"]=edit_hall_zone(previous,target,text,**options)
             else:
                 opts={"dense":True} if globals().get("_PALACE_DENSE_RELEASE") else {}
                 outcome["plan"]=new_ultra_plan(text,school,avoid=previous,backend=engine,attempts=count,**opts)
@@ -48,8 +63,8 @@ if down and not state["pressed"] and not state["busy"]:
         timer.Stop()
         timer.Dispose()
         state.pop("timer", None)
-        state["busy"] = False
         if node.OnPingDocument() != doc:
+            state["busy"] = False
             return
 
         def commit(d):
@@ -67,6 +82,8 @@ if down and not state["pressed"] and not state["busy"]:
                 if report:state["message"]+=" · Qwen: "+str(report["ai_passes"])+" проходов"
             except Exception as error:
                 state["message"] = "Ошибка · " + str(error)
+            state["busy"] = False
+            state.pop("finish",None)
             node.ExpireSolution(False)
 
         doc.ScheduleSolution(20, commit)
@@ -78,4 +95,6 @@ if down and not state["pressed"] and not state["busy"]:
     state["timer"] = timer
     threading.Thread(target=work, daemon=True).start()
 state["pressed"] = down
+state["edit_pressed"] = edit_down
+state["finish_pressed"] = finish_down
 status = state["message"]

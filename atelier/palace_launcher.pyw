@@ -23,6 +23,7 @@ if not native_available():
     ENGINES.pop("Локальная Qwen")
 QUALITIES = {"Эскиз":1,"Проработка":2,"Тонкая резьба":3}
 BUDGETS={"До 1 минуты":60,"До 10 минут":600,"До 1 часа":3600}
+SCOPES={"Весь зал":"hall","Только потолок":"ceiling","Лепнина над дверью":"portal"}
 def _key(mapping,value):
     return next((k for k,v in mapping.items() if v==value),next(iter(mapping)))
 
@@ -56,6 +57,7 @@ class Workshop:
         self.quality = tk.StringVar(value="Тонкая резьба")
         self.drafts = tk.IntVar(value=2)
         self.budget=tk.StringVar(value=next(iter(BUDGETS)))
+        self.scope=tk.StringVar(value=next(iter(SCOPES)))
         self.seed = tk.StringVar()
         self.size = [tk.StringVar(value=x) for x in (("12","8,5","6,8") if self.dense else ("9","6,7","4,9"))]
         self.tuning = [tk.StringVar(value=x) for x in ("1,3","0","0")]
@@ -105,7 +107,7 @@ class Workshop:
         if self.atelier:
             self.new_button.configure(text="Найти новый зал")
         self.new_button.pack(side="left",padx=(0,5))
-        self.edit_button=ttk.Button(actions,text="Применить к открытому проекту",command=lambda:self.start(True),state="disabled")
+        self.edit_button=ttk.Button(actions,text="Применить правку",command=lambda:self.start(True),state="disabled")
         self.edit_button.pack(side="left")
         ttk.Button(actions,text="Открыть папку",command=self.reveal).pack(side="right")
         if self.atelier:
@@ -115,6 +117,10 @@ class Workshop:
             ttk.Combobox(bar,textvariable=self.budget,values=tuple(BUDGETS),state="readonly",width=17).pack(side="left")
             self.finish_button=ttk.Button(bar,text="Сохранить найденное",command=self.finish_search,state="disabled")
             self.finish_button.pack(side="right")
+            zone_bar=ttk.Frame(form)
+            zone_bar.grid(row=14,column=0,columnspan=3,sticky="ew",pady=(4,1))
+            ttk.Label(zone_bar,text="Зона правки").pack(side="left",padx=(0,7))
+            ttk.Combobox(zone_bar,textvariable=self.scope,values=tuple(SCOPES),state="readonly",width=22).pack(side="left")
         self.bar=ttk.Progressbar(form,mode="indeterminate")
         self.bar.grid(row=11,column=0,columnspan=3,sticky="ew",pady=(7,2))
         ttk.Label(form,textvariable=self.status,wraplength=670).grid(row=12,column=0,columnspan=3,sticky="w")
@@ -219,7 +225,8 @@ class Workshop:
             relief=depth,foliage=foliage,gilding=gilt,window_scan=Path(self.scan.get()) if self.scan.get() else None,
             no_scan=not bool(self.scan.get()),window_material=None,painting=self.painting.get(),
             ultra=True,dense=self.dense,avoid=self.project if not edit else None,
-            budget=BUDGETS[self.budget.get()] if self.atelier else None,finish=self.finish_event.is_set)
+            budget=BUDGETS[self.budget.get()] if self.atelier else None,finish=self.finish_event.is_set,
+            scope=SCOPES[self.scope.get()] if edit and self.atelier else "hall")
 
     def start(self,edit):
         if self.busy:
@@ -265,9 +272,11 @@ class Workshop:
             else:
                 path,counts=payload
                 plan=self.use_recipe(path.with_suffix(".recipe.json"),restore=False)
+                selected=plan.get("search",{}).get("selected",plan["source"])
+                ceiling=plan.get("zones",{}).get("ceiling",plan)
                 source={"native":"Qwen","architecture_qwen":"композиция Qwen","architecture_rules":"автономная композиция","procedural_random":"случайная композиция",
-                        "procedural_prompt":"автономные правила"}.get(plan["source"],plan["source"])
-                self.status.set(f"Сохранён {path.name} · полей {len(plan['layout'])} · {source} · {counts[1]:,} треугольников".replace(","," "))
+                        "procedural_prompt":"автономные правила"}.get(selected,selected)
+                self.status.set(f"Сохранён {path.name} · полей {len(ceiling['layout'])} · {source} · {counts[1]:,} треугольников".replace(","," "))
         if self.busy:
             self.root.after(120,self.poll)
 

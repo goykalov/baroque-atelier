@@ -233,7 +233,7 @@ def _enrich_base(g, zone, frame, bays, height, scale, style, detail, relief, see
                          min(.67*extent,210*s),-side)
 
 
-def enrich_room(g, plan, size, detail, relief, frames):
+def enrich_room(g, plan, size, detail, relief, frames, *, roof=None, ceiling=None):
     """Build small architectural projections over the existing wall mesh."""
     if detail < 2:
         return
@@ -245,7 +245,9 @@ def enrich_room(g, plan, size, detail, relief, frames):
     rng=random.Random(seed+9871)
     recipe={k:plan[k] for k in ("curl","foliage","gilding")}
     recipe.update(plan.get("zone_tuning",{}).get("wall",{}))
-    _enrich_ceiling(g,plan,size,detail,relief,s,cove)
+    ceiling=ceiling or plan
+    if ceiling.get("ultra"):
+        _enrich_ceiling(roof if roof is not None else g,ceiling,size,detail,relief,s,cove)
     if recipe["foliage"] < .13:
         return
     for i,(zone,span,frame) in enumerate(frames):

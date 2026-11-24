@@ -14,11 +14,11 @@ import time
 if "_palace_compile" not in globals():
     from palace_plan import (
         PALACE_PROFILES, _palace_compile, _palace_check_intent, _palace_focal,
-        _palace_expectations, _palace_clear_corners, _palace_mask, _palace_similarity,
+        _palace_expectations, _palace_clear_corners, _palace_inside, _palace_mask, _palace_similarity,
         _palace_schema, _palace_native_files, local_plan,
     )
     from palace_auto import _ultra_random_draft, _ultra_spec, _dense_tuning, _ultra_school
-    from palace_architecture import ARCH_WALLS, ARCH_CEILINGS, ARCH_LABELS
+    from palace_architecture import ARCH_WALLS, ARCH_CEILINGS, ARCH_LABELS, HALL_SECTIONS
     from palace_art import assign_palace_paintings
 
 
@@ -26,6 +26,7 @@ HALL_LAYOUTS=("radial","procession","diagonal","islands","banded","cross")
 HALL_PROFILE_LABELS={"radial":"венец","procession":"анфилада","diagonal":"диагональ",
                      "islands":"острова","banded":"продольные поля","cross":"крестовая схема"}
 HALL_BUDGETS=(60,600,3600)
+HALL_SCOPES=("hall","ceiling","portal")
 
 
 def architecture_checked(spec):
@@ -35,6 +36,10 @@ def architecture_checked(spec):
     if type(order) is not int or not 3<=order<=5:
         raise ValueError("Число ярусов должно быть 3–5")
     result={k:spec[k] for k in ("walls","ceiling","order")}
+    if "section" in spec:
+        if spec["section"] not in HALL_SECTIONS:
+            raise ValueError("Неизвестный разрез зала")
+        result["section"]=spec["section"]
     for k,lo in (("reach",.35),("asymmetry",0.)):
         v=spec.get(k)
         if type(v) not in (int,float) or not math.isfinite(v) or not lo<=v<=1:
@@ -69,7 +74,7 @@ def validate_hall_layout(layout):
 
 
 def hall_history_item(plan):
-    return {k:plan[k] for k in ("architecture","layout","wall_shape","wall_bays","pattern","paintings") if k in plan}
+    return {k:plan[k] for k in ("architecture","layout","wall_shape","wall_motif","wall_bays","wall_rhythm","pattern","paintings") if k in plan}
 
 
 def _hall_places(pattern,arch,rng):
@@ -119,6 +124,7 @@ def _hall_places(pattern,arch,rng):
 
 def _hall_random_spec(rng):
     return {"walls":rng.choice(ARCH_WALLS),"ceiling":rng.choice(ARCH_CEILINGS),
+            "section":rng.choice(HALL_SECTIONS),"bays":rng.randint(3,6),
             "order":rng.choice((3,4,5)),"reach":round(rng.uniform(.51,1),2),"asymmetry":round(rng.uniform(.26,.98),2),
             "layout":rng.choice(HALL_LAYOUTS),"motif":rng.choice(("sunburst","shell","vine","flower")),
             "art":rng.choice((1,2,3)),"growth":round(rng.uniform(.95,1.29),2),
@@ -164,6 +170,12 @@ def _hall_compile(spec,style,seed,brief,previous,art_history,size_m):
         if "architecture" in previous:
             tuning["ceiling"]=previous["architecture"]["ceiling"]
         pattern=previous.get("pattern",pattern)
+    if "bays" in spec:
+        bays=spec["bays"]
+        if type(bays) is not int or not 3<=bays<=6:
+            raise ValueError("Нужно от трёх до шести пролётов")
+        if not previous or not re.search(r"только\s+потол|стен\w*\s+не\s+(?:мен|трог)",brief.lower()):
+            plan["wall_bays"]=plan["program"]["wall_bays"]=bays
     validate_hall_layout(plan["layout"])
     _palace_check_intent(plan,brief)
     _palace_focal(plan,brief)
@@ -173,14 +185,18 @@ def _hall_compile(spec,style,seed,brief,previous,art_history,size_m):
     plan["ultra"]=_ultra_spec(plan,brief,previous.get("ultra") if previous else None)
     plan["dense"]=_dense_tuning(plan,brief,previous)
     plan["dense"].update(growth=spec["growth"],order=min(tuning["order"],4),rhythm=tuning["asymmetry"])
-    plan["paintings"]=copy.deepcopy(previous.get("paintings",{})) if preserve else assign_palace_paintings(plan,spec["art"],art_history)
+    reserved=set()
+    for clause in re.split(r"[.!?;]",brief.lower()):
+        if re.search(r"центр|середин",clause) and re.search(r"розет|лепнин|ветвящ",clause):
+            reserved.update(field["id"] for field in plan["layout"] if _palace_inside(field,0,0))
+    plan["paintings"]=copy.deepcopy(previous.get("paintings",{})) if preserve else assign_palace_paintings(plan,spec["art"],art_history,reserved)
     plan["title"]=ARCH_LABELS[tuning["walls"]].capitalize()+" · "+ARCH_LABELS[tuning["ceiling"]]
     plan["source"]="architecture_rules"
     plan["export_note"]=str(spec.get("edit",""))[:280]
     return plan
 
 
-def _hall_score(plan,archive,mask,old_masks,size):
+def _hall_score(plan,archive,mask,old_masks,size,scope):
     # Use geometric footprint and topology; palette and texture are deliberately absent.
     a=plan["architecture"]
     base=min(.69,len(mask)/2401)
@@ -190,13 +206,24 @@ def _hall_score(plan,archive,mask,old_masks,size):
     if size and min(size[:2])<4.5 and a["walls"] in ("gallery","pilasters"):
         constructive-=.07
     novelty=[]
+    if scope=="portal":
+        return round(.20*plan["foliage"]+.12*plan["dense"]["growth"]+
+                     .10*(plan["wall_motif"]!=archive[-1].get("wall_motif") if archive else True),6)
     for old,old_mask in zip(archive,old_masks):
         b=old.get("architecture",{})
-        same_pair=a["walls"]==b.get("walls") and a["ceiling"]==b.get("ceiling")
         shape_delta=1.-_palace_similarity(mask,old_mask)
-        if same_pair and shape_delta<.28:
+        ceiling_delta=(.38*(a["ceiling"]!=b.get("ceiling"))+
+                       .20*(plan["pattern"]!=old.get("pattern"))+.42*shape_delta)
+        if scope=="ceiling":
+            distance=ceiling_delta
+        else:
+            wall_delta=(.49*(a["walls"]!=b.get("walls"))+.20*(a.get("section")!=b.get("section"))+
+                        .20*min(1.,abs(plan["wall_bays"]-old.get("wall_bays",3))/2)+
+                        .11*(plan["wall_rhythm"]!=old.get("wall_rhythm")))
+            distance=.62*wall_delta+.38*ceiling_delta
+        if distance<.08:
             return None
-        novelty.append(.46*(a["walls"]!=b.get("walls"))+.28*(a["ceiling"]!=b.get("ceiling"))+.26*shape_delta)
+        novelty.append(distance)
     diversity=min(novelty,default=.69)
     return round(constructive+.65*diversity,6)
 
@@ -205,7 +232,8 @@ def _hall_json_schema(exclude=None):
     enum=lambda xs:{"type":"string","enum":list(xs)}
     integer=lambda lo,hi:{"type":"integer","minimum":lo,"maximum":hi}
     number=lambda lo,hi:{"type":"number","minimum":lo,"maximum":hi}
-    props={"walls":enum(ARCH_WALLS),"ceiling":enum(ARCH_CEILINGS),"order":integer(3,5),
+    props={"walls":enum(ARCH_WALLS),"ceiling":enum(ARCH_CEILINGS),"section":enum(HALL_SECTIONS),
+           "bays":integer(3,6),"order":integer(3,5),
            "reach":number(.35,1),"asymmetry":number(0,1),"layout":enum(HALL_LAYOUTS),
            "motif":enum(("shell","sunburst","vine","flower")),"art":integer(0,4),
            "growth":number(.8,1.3),"edit":{"type":"string","maxLength":280}}
@@ -223,6 +251,8 @@ def _hall_local_model(engine,model_file,label,brief,proposal,remaining,seed,cap,
         "gallery=upper gallery, canopy=projecting curved baldachins, grotto=organic sculptural archwork. "
         "Ceilings: star=radial sculpted web, rib_vault=barrel ribs, garlands=waves, "
         "woven=interlacing, shells=scalloped relief, cassettes=deep coffers. "
+        "Section: vertical=tall architectural order, tiered=lower panels and strong horizontal divisions, "
+        "swept=alternating heights and soft wall rhythm. Bays is the number of bays on the long walls. "
         "Layout radial has four satellites; procession has three large axial fields; "
         "cross forms a transverse intersection; banded makes long bands; diagonal offers an oblique axis; "
         "islands are uneven clustered fields. Edit should briefly say in Russian what spatial change you made and why. "
@@ -264,105 +294,216 @@ def _hall_local_model(engine,model_file,label,brief,proposal,remaining,seed,cap,
 
 
 def search_hall(prompt="",style="random",seed=None,previous=None,budget=60,history=(),
-                progress=None,backend="native",size_m=None,finish=None):
-    """Select the best valid geometry recipe found before the search deadline."""
+                progress=None,backend="native",size_m=None,finish=None,checkpoint=None,scope="hall"):
+    """Explore room topology, then refine viable recipes within the selected budget."""
     if budget not in HALL_BUDGETS:
         raise ValueError("Выберите 1, 10 или 60 минут")
-    if backend not in ("native","rules"):
-        raise ValueError("Неизвестный локальный режим поиска")
+    if backend not in ("native","rules") or scope not in HALL_SCOPES:
+        raise ValueError("Неизвестный режим или зона поиска")
     progress=progress or (lambda message:None)
+    finish=finish or (lambda:False)
     started=time.monotonic()
     deadline=started+budget
     seed=secrets.randbelow(2**30) if seed is None else int(seed)
     rng=random.Random(seed)
     prompt=(prompt or "").strip()
     old=list(history)[-12:]
-    avoid_art={t for u in old[-2:] for t in u.get("paintings",{}).values()}
-    masks=[_palace_mask(u) for u in old]
+    avoid_art={art for item in old[-2:] for art in item.get("paintings",{}).values()}
+    masks=[_palace_mask(item) for item in old]
     pool=[]
     notes=[]
-    explicit_style=_ultra_school(prompt,style,random.Random(0)) if (style!="random" or re.search(r"бавар|амалиенбург|нимфенбург|немецк|русск|растрелли|елизаветин|екатерининск|мексик|пуэбл|новоиспан|ретабло",prompt.lower())) else None
-    if previous and not explicit_style:explicit_style=previous["style"]
+    visited=set()
+    procedural=local_completed=0
+    published=None
+    explicit_style=_ultra_school(prompt,style,random.Random(0)) if (style!="random" or re.search(
+        r"бавар|амалиенбург|нимфенбург|немецк|русск|растрелли|елизаветин|екатерининск|мексик|пуэбл|новоиспан|ретабло",prompt.lower())) else None
+    if previous and not explicit_style:
+        explicit_style=previous["style"]
 
-    def accept(spec,tick,label,school):
-        trial_seed=seed+7919*tick
-        p=_hall_compile(spec,school,trial_seed,prompt,previous,avoid_art,size_m)
-        score=_hall_score(p,old,_palace_mask(p),masks,size_m)
-        if score is None:raise ValueError("Слишком близко к залу из истории")
-        p.update(seed=int(trial_seed),input_seed=seed,source=label)
-        pool.append((score,p,spec))
+    def accept(spec,label,school):
+        trial_seed=seed+7919*(procedural+2*len(notes))
+        brief=prompt if scope!="portal" else ""
+        candidate=_hall_compile(spec,school,trial_seed,brief,previous,avoid_art,size_m)
+        score=_hall_score(candidate,old,_palace_mask(candidate),masks,size_m,scope)
+        if score is None:
+            raise ValueError("Расположение слишком близко к предыдущему варианту")
+        candidate.update(input_seed=seed,source=label)
+        pool.append((score,candidate,spec))
         return score
 
-    progress("Строятся и сравниваются компоновки")
-    total={60:24,600:72,3600:144}[budget]
-    for i in range(total):
-        spec=_hall_random_spec(rng)
+    def best_result(stop):
+        best=max(pool,key=lambda item:item[0])
+        neural=[entry for entry in pool if entry[1]["source"]=="architecture_qwen" and entry[0]>=best[0]-.055]
+        if neural:
+            best=max(neural,key=lambda item:item[0])
+        return dict(best[1],search={
+            "budget_s":budget,"elapsed_s":round(time.monotonic()-started,2),
+            "procedural_drafts":procedural,"valid_recipes":len(pool),"ai_passes":local_completed,
+            "selected":best[1]["source"],"score":best[0],"stop":stop,"trace":list(notes),
+        })
+
+    def publish():
+        nonlocal published
+        if not checkpoint:
+            return
+        candidate=best_result("in_progress")
+        key=(candidate["seed"],candidate["source"])
+        if published!=key:
+            checkpoint(candidate)
+            published=key
+
+    def vary(spec,school):
+        nonlocal procedural
+        procedural+=1
         try:
-            score=accept(spec,i,"architecture_rules",explicit_style or rng.choice(tuple(PALACE_PROFILES)))
+            accept(spec,"architecture_rules",school)
         except ValueError as error:
-            if i<4:notes.append({"phase":"layout","error":str(error)})
+            if not pool and len(notes)<4:
+                notes.append({"phase":"layout","error":str(error)})
+
+    progress("Обзор · опоры, разрез и тип потолка")
+    breadth,rounds,iterations,cap={
+        60:(24,2,1,25),
+        600:(48,22,16,32),
+        3600:(96,110,75,45),
+    }[budget]
+    schools=tuple(PALACE_PROFILES)
+    axes=[(wall,ceiling) for wall in ARCH_WALLS for ceiling in ARCH_CEILINGS]
+    rng.shuffle(axes)
+    for index in range(breadth):
+        if (pool and finish()) or time.monotonic()>=deadline:
+            break
+        spec=_hall_random_spec(rng)
+        spec["walls"],spec["ceiling"]=axes[index%len(axes)]
+        vary(spec,explicit_style or rng.choice(schools))
+        if len(pool)==1 and published is None:
+            publish()
     if not pool:
         raise ValueError("Не найден допустимый эскиз "+str(notes[:2]))
-    # Two roles of the same locally loaded model, with serial proposal/critique passes.
+    publish()
+
     inference=None
-    if backend=="native":
-        try:inference=_palace_native_files()
-        except (ValueError,RuntimeError,OSError) as error:notes.append({"phase":"model","error":str(error)})
-    local_completed=0
-    stop="rules_only" if backend=="rules" else "model_unavailable" if inference is None else "completed_passes"
-    rounds={60:2,600:22,3600:108}[budget]
-    stage_school=explicit_style or max(pool,key=lambda item:item[0])[1]["style"]
-    used_signatures=set()
-    repeats=0
-    for i in range(rounds if inference else 0):
-        if finish and finish():
-            stop="accepted_early"
+    if backend=="native" and not finish() and time.monotonic()<deadline:
+        try:
+            inference=_palace_native_files()
+        except (ValueError,RuntimeError,OSError) as error:
+            notes.append({"phase":"model","error":str(error)})
+    stop="rules_only" if backend=="rules" else "model_unavailable" if not inference else "completed_passes"
+    for step_index in range(max(iterations,rounds if inference else 0)):
+        if finish() or time.monotonic()>=deadline:
             break
         remaining=deadline-time.monotonic()
-        if remaining<4:
-            stop="time_budget"
-            break
-        progress(f"Qwen · {'предложение' if i==0 else 'критика и перестройка'} {i+1} · до {math.ceil(remaining)} с")
-        base=sorted(pool,key=lambda item:item[0],reverse=True)[:3]
-        axis=("walls","ceiling","layout")[i%3]
-        exclude=(axis,base[0][2][axis]) if i else None
-        context={"hall_m":size_m,"base":[{"draft":x[2],"score":x[0]} for x in base],
-                 "avoid_recent":[u.get("architecture",{}) for u in old[-5:]],
-                 "already_tried":[x.get("architecture") for x in notes[-4:] if x.get("architecture")],
+        structure=step_index<max(2,rounds//3)
+        phase="structure" if structure else "detail"
+        label="Композиция" if structure else "Проработка"
+        progress(f"{label} · {step_index+1} · {len(pool)} схем · до {math.ceil(remaining)} с")
+        shortlist=sorted(pool,key=lambda item:item[0],reverse=True)[:3]
+        if step_index<iterations:
+            for j,(_,ref,original) in enumerate(shortlist):
+                if finish() or time.monotonic()>=deadline:
+                    break
+                variation=dict(original)
+                if structure:
+                    axis=("section","walls","ceiling","layout")[(step_index+j)%4]
+                    variation[axis]=_hall_random_spec(rng)[axis]
+                else:
+                    variation.update(reach=round(max(.35,min(1.,original["reach"]+rng.uniform(-.15,.15))),2),
+                                     growth=round(max(.8,min(1.3,original["growth"]+rng.uniform(-.16,.16))),2),
+                                     motif=rng.choice(("shell","sunburst","vine","flower")))
+                vary(variation,ref["style"])
+            publish()
+        remaining=deadline-time.monotonic()
+        if not inference or step_index>=rounds or remaining<4 or finish():
+            continue
+        axis=("walls","ceiling","layout","section")[step_index%4]
+        top=shortlist[0][2]
+        exclude=(axis,top[axis]) if step_index and structure else None
+        context={"target":scope,"hall_m":size_m,"base":[{"draft":entry[2],"score":entry[0]} for entry in shortlist],
+                 "avoid_recent":[item.get("architecture",{}) for item in old[-5:]],
+                 "recent":[item.get("architecture") for item in notes[-4:] if item.get("architecture")],
                  "replace":exclude,
-                 "task":"Invent a substantially different architecture" if i==0 else
-                 "Critique the best draft, replace the indicated element, and improve the alignment of framing with the new structure."}
-        step={"phase":"proposal" if i==0 else "critique","local_model":"Qwen3 8B"}
+                 "task":("Propose a different silhouette and distribution of the bays." if structure else
+                         "Improve focal hierarchy, ornamental scale and relief. Keep the stronger structural features.")}
+        if scope=="portal":
+            context["task"]="Design only the relief above a door. Use motif and growth to express the request; reach is its width. Ignore the rest of the hall."
+        note={"phase":phase,"local_model":"Qwen3 8B"}
         t=time.monotonic()
         try:
             spec=_hall_local_model(*inference,"Qwen3 8B",prompt or "Выразительный непохожий барочный зал.",
-                                   context,remaining-1,seed+i,{60:34,600:100,3600:155}[budget],exclude,finish)
-            sig=tuple(spec[k] for k in ("walls","ceiling","layout","order"))
-            step.update(architecture={k:spec[k] for k in ("walls","ceiling","layout")},
-                        comment=spec.get("edit",""))
-            if sig in used_signatures:
-                repeats+=1
-                raise ValueError("Локальная модель повторила скелет композиции")
-            used_signatures.add(sig)
-            step["score"]=accept(spec,total+i,"architecture_qwen",stage_school)
+                                   context,remaining-1,seed+step_index,cap,exclude,finish)
+            signature=tuple(spec[key] for key in ("walls","ceiling","section","layout","bays","order","motif","reach","growth"))
+            note.update(architecture={key:spec[key] for key in ("walls","ceiling","section","layout","bays")},
+                        comment=spec["edit"])
+            if signature in visited:
+                raise ValueError("Модель повторила найденную композицию")
+            visited.add(signature)
+            note["score"]=accept(spec,"architecture_qwen",explicit_style or shortlist[0][1]["style"])
             local_completed+=1
         except (RuntimeError,OSError,KeyError,TypeError,ValueError,subprocess.SubprocessError) as error:
-            step["error"]=str(error)[:380]
-            if isinstance(error,subprocess.TimeoutExpired):stop="time_budget" if deadline-time.monotonic()<4 else "model_timeout"
-        step["seconds"]=round(time.monotonic()-t,2)
-        notes.append(step)
-        if finish and finish():
-            stop="accepted_early"
-            break
-        if repeats>={60:2,600:8,3600:17}[budget] and local_completed>=3:
-            stop="repeated_structures"
-            break
-    # Use model work when it delivers a valid alternative within a small margin of the objective best.
-    best=max(pool,key=lambda item:item[0])
-    neural=[p for p in pool if p[1]["source"]=="architecture_qwen" and p[0]>=best[0]-.12]
-    if neural:best=max(neural,key=lambda item:item[0])
-    result=best[1]
-    result["search"]={"budget_s":budget,"elapsed_s":round(time.monotonic()-started,2),
-                      "procedural_drafts":total,"valid_recipes":len(pool),"ai_passes":local_completed,
-                      "selected":result["source"],"score":best[0],"stop":stop,"trace":notes}
+            note["error"]=str(error)[:380]
+        note["seconds"]=round(time.monotonic()-t,2)
+        notes.append(note)
+        publish()
+    if finish():
+        stop="accepted_early"
+    elif deadline-time.monotonic()<4:
+        stop="time_budget"
+    result=best_result(stop)
+    if checkpoint:
+        checkpoint(result)
     return result
+
+
+def portal_checked(portal):
+    if not isinstance(portal,dict) or type(portal.get("seed")) is not int:
+        raise ValueError("Некорректный рецепт лепнины над дверью")
+    plate=dict(id="p1",x=0,y=0,rx=.5,ry=.5,**{key:portal[key] for key in ("shape","motif","elements")})
+    validate_hall_layout([plate])
+    for key,low,high in (("width",.55,1.30),("relief",.60,1.45),("curl",0,1),("foliage",0,1)):
+        value=portal.get(key)
+        if type(value) not in (float,int) or not low<=value<=high:
+            raise ValueError("Недопустимый параметр портала: "+key)
+    return dict(portal)
+
+
+def edit_hall_zone(plan,scope,prompt,*,checkpoint=None,**options):
+    """Build a replacement recipe anchored to one architectural zone."""
+    if scope not in ("ceiling","portal") or not (prompt or "").strip():
+        raise ValueError("Выберите зону и введите описание правки")
+    previous=plan.get("zones",{}).get("ceiling",plan) if scope=="ceiling" else plan
+    history=[hall_history_item(previous)] if previous.get("architecture") else []
+    # The patch and the existing room use the same material palette.
+    def apply(candidate):
+        if candidate["style"]!=plan["style"]:
+            candidate=dict(candidate,style=plan["style"])
+        zones=dict(plan.get("zones",{}))
+        title="потолка" if scope=="ceiling" else "лепнины над дверью"
+        if scope=="ceiling":
+            zones[scope]=candidate
+        else:
+            text=prompt.lower()
+            motifs=(("раков|ракуш","shell"),("розет|лучист|солнеч","sunburst"),
+                    ("акант|лоз|виноград|ветв","vine"),("цвет|букет","flower"))
+            motif=next((value for regex,value in motifs if re.search(regex,text)),None)
+            motif=motif or candidate["layout"][0]["motif"]
+            elements={"shell":["shell","beads","scroll"],"sunburst":["fan","rosette","scroll"],
+                      "vine":["spray","scroll","rosette"],"flower":["rosette","spray","beads"]}[motif]
+            compact=bool(re.search(r"сдерж|легк|лёгк|меньше|плоск|неглуб",text))
+            arch=candidate["architecture"]
+            zones[scope]=portal_checked({
+                "shape":candidate["wall_shape"],"motif":motif,"elements":elements,
+                "seed":candidate["seed"],"width":.68+.60*arch["reach"],
+                "relief":.72 if compact else .88+.36*arch["reach"],
+                "curl":candidate["curl"],"foliage":min(.28,candidate["foliage"]) if compact else candidate["foliage"],
+            })
+        return dict(plan,zones=zones,zone_edit={"target":scope,"prompt":prompt},
+                    title=plan["title"].split(" · Правка ")[0]+" · Правка "+title,
+                    search=candidate["search"])
+
+    def save(candidate):
+        if checkpoint:
+            checkpoint(apply(candidate))
+
+    candidate=search_hall(prompt,style=plan["style"],previous=previous,history=history,scope=scope,
+                          checkpoint=save if checkpoint else None,**options)
+    return apply(candidate)

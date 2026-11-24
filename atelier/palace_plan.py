@@ -50,7 +50,7 @@ def _palace_schema():
     band = _palace_obj({"weight": weight, "cells": _palace_list(cell, 1, 5)})
     return _palace_obj({
         "title": {"type": "string"}, "curl": fraction, "foliage": fraction, "gilding": fraction,
-        "wall_bays": {"type": "integer", "minimum": 2, "maximum": 5},
+        "wall_bays": {"type": "integer", "minimum": 2, "maximum": 6},
         "wall_rhythm": _palace_enum(PALACE_RHYTHMS), "wall": descriptor,
         "palette": _palace_obj({key: descriptor for key in "ABC"}),
         "axis": _palace_enum(("x", "y")), "bands": _palace_list(band, 1, 5),
@@ -124,7 +124,7 @@ def _palace_compile(program, style, seed, source):
         "curl": _palace_number(program["curl"], 0, 1),
         "foliage": _palace_number(program["foliage"], 0, 1),
         "gilding": _palace_number(program["gilding"], 0, 1),
-        "wall_bays": _palace_number(program["wall_bays"], 2, 5, True),
+        "wall_bays": _palace_number(program["wall_bays"], 2, 6, True),
         "wall_rhythm": _palace_choice(program["wall_rhythm"], PALACE_RHYTHMS),
         "wall_shape": wall["shape"], "wall_motif": wall["motif"], "wall_elements": wall["elements"],
         "program": program,

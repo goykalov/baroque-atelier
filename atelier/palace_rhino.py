@@ -95,15 +95,33 @@ def publish_palace(rd, owner, stamp, batch, painting_path):
     meshes, materials, parts = batch
     if len(previous) == len(meshes) and all(o.Attributes.GetUserString("PalaceUltra.State") == stamp for o in previous):
         return
-    if any(o.IsLocked for o in previous):
-        raise ValueError("Снимите блокировку с объектов этого зала")
+    def material_name(key,appearance):
+        return ("Барочная мастерская · "+key+" · "+str(appearance.Diffuse.ToArgb())+
+                " · t"+str(round(appearance.Transparency,2)))
+    old_by_name={obj.Attributes.Name:obj for obj in previous}
+    retained=set()
+    pending=[]
+    for mesh,appearance,part in zip(meshes,materials,parts):
+        old=old_by_name.get(part)
+        _,key=part.split(" / ")
+        index=old.Attributes.MaterialIndex if old is not None else -1
+        if (old is not None and index>=0 and rd.Materials[index].Name==material_name(key,appearance)
+                and old.Geometry.DataCRC(0)==mesh.DataCRC(0)):
+            retained.add(old.Id)
+        else:
+            pending.append((mesh,appearance,part))
+    retiring=[obj for obj in previous if obj.Id not in retained]
+    if any(obj.IsLocked for obj in retiring):
+        raise ValueError("Снимите блокировку с объектов редактируемой зоны")
+    if not pending and not retiring:
+        return
     prefix = "Барочная мастерская · " + owner[:8]
     layers, material_ids = {}, {}
     textures=painting_path if isinstance(painting_path,dict) else {"fresco":painting_path}
     added, deleted = [], []
     undo = rd.BeginUndoRecord("Барочная мастерская")
     try:
-        for mesh, appearance, part in zip(meshes, materials, parts):
+        for mesh, appearance, part in pending:
             zone, key = part.split(" / ")
             if zone not in layers:
                 label = prefix + " · " + zone
@@ -116,8 +134,7 @@ def publish_palace(rd, owner, stamp, batch, painting_path):
                     layers[zone] = layer.Index
             if key not in material_ids:
                 color = appearance.Diffuse
-                label = "Барочная мастерская · " + key + " · " + str(color.ToArgb())
-                label += " · t" + str(round(appearance.Transparency, 2))
+                label = material_name(key,appearance)
                 item = next((m for m in rd.Materials if not m.IsDeleted and m.Name == label), None)
                 if item is None:
                     item = Material()
@@ -144,7 +161,7 @@ def publish_palace(rd, owner, stamp, batch, painting_path):
             if obj_id == System.Guid.Empty:
                 raise ValueError("Не удалось добавить «" + part + "»")
             added.append(obj_id)
-        for obj in previous:
+        for obj in retiring:
             if not rd.Objects.Delete(obj.Id, True):
                 raise ValueError("Не удалось заменить «" + obj.Name + "»")
             deleted.append(obj.RuntimeSerialNumber)

@@ -39,3 +39,11 @@ Six local searches used the same **12 × 8.5 × 6.8 m** room envelope. The galle
 [Editable generation recipe](../examples/gallery/hall-08.recipe.json)
 
 The [generation log](../examples/gallery/gallery.json) records the briefs, selected wall and ceiling structures, seeds, search passes, and original OBJ hashes. The two original preview scenes are available as OBJ downloads in the [v0.1.0 release](https://github.com/goykalov/baroque-atelier/releases/tag/v0.1.0).
+
+## v0.2.0 · Ceiling revision
+
+A local search with the 10-minute preset finished in 3 minutes 17 seconds. It compared 95 valid recipes and accepted 15 Qwen proposals. A second search rebuilt the ceiling with a central relief and open corners inside the same hall. Window light and material textures were finished in ImageGen over the Blender render.
+
+![The revised baroque ceiling with the original arcaded walls](showcase/v0.2.0-ceiling.jpg)
+
+[Starting hall recipe](../examples/v0.2.0/before.recipe.json) · [Ceiling revision recipe](../examples/v0.2.0/after.recipe.json)
