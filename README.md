@@ -1,6 +1,6 @@
 # Baroque Atelier
 
-[![Six generated baroque halls](docs/showcase/cover.jpg)](docs/SHOWCASE.md)
+[![BAROCCO ATELIER](docs/showcase/cover.png)](docs/SHOWCASE.md)
 
 **Baroque Atelier is a local design tool for exploring baroque interiors inside a fixed room envelope.** Generate a hall with a blank brief or describe a direction, then tune the relief, branching, and room dimensions in Grasshopper. The desktop edition exports editable OBJ meshes, materials, and a JSON recipe.
 
