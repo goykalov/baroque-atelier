@@ -1,5 +1,11 @@
 # Barocco Atelier
 
+**Project team**
+
+[<img src="https://github.com/goykalov.png?size=56" width="28" height="28" alt="" /> goykalov](https://github.com/goykalov)
+· [<img src="https://github.com/Vitality-ytilatiV.png?size=56" width="28" height="28" alt="" /> Vitality-ytilatiV](https://github.com/Vitality-ytilatiV)
+· [<img src="https://github.com/vadimzeibel.png?size=56" width="28" height="28" alt="" /> vadimzeibel](https://github.com/vadimzeibel)
+
 [![BAROCCO ATELIER](docs/showcase/cover.png)](docs/SHOWCASE.md)
 
 **Generate and edit Baroque interiors inside a room you define.** Start with dimensions and a brief, compare compositions, then tune branching plasterwork and relief in Rhino and Grasshopper. The standalone Windows app exports editable OBJ meshes, materials, and a JSON recipe you can reopen.
