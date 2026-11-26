@@ -23,6 +23,29 @@ def panel_outline(shape, t):
     return u, (.24 + 1.24 * v if shape == "arch" else v)
 
 
+def _palace_inside(panel, x, y):
+    # Same outline equations as the raised plates in panel_outline.
+    u = (x-panel["x"]) / (.896*panel["rx"])
+    v = (y-panel["y"]) / (.896*panel["ry"])
+    if max(abs(u), abs(v)) > 1.001:
+        return False
+    shape = panel["shape"]
+    if shape == "oval":
+        return u*u + v*v <= 1
+    if shape == "octagon":
+        return abs(u) + abs(v) <= 1.62
+    if shape == "lobed":
+        angle = math.atan2(v, u)
+        r = (1 + .095*math.cos(4*angle) - .043*math.cos(8*angle)) / 1.055
+        return u*u + v*v <= r*r
+    if shape == "arch":
+        v -= .24
+        if v >= 0:
+            return u*u + (v/.76)**2 <= 1
+        return abs(u)**(2/.46) + abs(v/1.24)**(2/.46) <= 1
+    return abs(u)**(2/.36) + abs(v)**(2/.36) <= 1
+
+
 def _palace_bezier(points, t):
     s = 1 - t
     weights = (s**3, 3*s*s*t, 3*s*t*t, t**3)
@@ -236,7 +259,7 @@ class _PalacePanel:
         return [(self.a*x*scale,self.b*y*scale) for x,y in
                 (panel_outline(self.shape,i/n) for i in range(n))]
 
-    def mount(self):
+    def mount(self, trim=True):
         pts=self.ring()
         n=len(pts)
         vv=[(x,y,1.4) for x,y in pts]+[(x,y,-.7) for x,y in pts]
@@ -246,6 +269,8 @@ class _PalacePanel:
             j=(i+1)%n
             ff.extend(((2*n,i,j),(2*n+1,n+j,n+i),(i,i+n,j+n,j)))
         self.emit("fresco" if self.painted else "ground",vv,ff)
+        if not trim:
+            return
         # A guilloche/profile is inset by a fixed distance all round, including on long panels.
         seq = ((-6,5,4,"shadow"),(1,8.6,7,self.light),(11,3.4,9,self.trim),
                (18,4.2,5,self.main))
@@ -475,4 +500,12 @@ def decorate_panel(geom, zone, frame, width, height, style, detail, relief, seed
     if width <= 0 or height <= 0:
         return
     panel = _PalacePanel(geom,zone,frame,width,height,style,detail,relief,seed,recipe)
-    panel.decorate()
+    amount=getattr(geom,"carving",None)
+    if amount is None:
+        panel.decorate()
+    else:
+        if "carve_field" in globals():
+            sculpt=carve_field
+        else:
+            from palace_carving import carve_field as sculpt
+        sculpt(panel,amount,seed,recipe.get("carving_crown"))

@@ -13,7 +13,9 @@ from palace_auto import new_ultra_plan
 from palace_art import palace_art_paths, palace_uv
 from palace_search import architecture_checked, edit_hall_zone, hall_history_item, portal_checked, search_hall, validate_hall_layout
 from palace_refinement import refinement_checked
-from palace_room import ROOM_PALETTES, build_palace
+from palace_ensemble import ensemble_checked
+from palace_carving import carving_fraction
+from palace_room import ROOM_PALETTES, build_palace, palace_palette
 
 
 def _triangulate(indices, vertices):
@@ -201,6 +203,8 @@ def _recipe_from_json(plan, allow_zones=True):
             raise ValueError("Роспись ссылается на отсутствующее поле")
     if "refinement" in plan:
         rebuilt["refinement"]=refinement_checked(plan["refinement"],"hall" if allow_zones else "ceiling")
+    if "ensemble" in plan:
+        rebuilt["ensemble"]=ensemble_checked(plan["ensemble"])
     if "zones" in plan:
         zones=plan["zones"]
         if not allow_zones or not isinstance(zones,dict) or set(zones)-{"ceiling","portal"}:
@@ -249,8 +253,13 @@ def export(args, progress=None):
     plan = read_recipe(src) if src else None
     settings = plan.get("export",{}) if plan else {}
     budget=getattr(args,"budget",None)
+    ensemble_seconds=getattr(args,"ensemble_seconds",None)
+    if ensemble_seconds is not None and budget is None:
+        budget=3600
     scope=getattr(args,"scope","hall")
     scoped=scope!="hall"
+    if ensemble_seconds is not None and scoped:
+        raise ValueError("Объёмная композиция запускается для целого зала")
     if scoped:
         if plan is None or not args.prompt or not budget:
             raise ValueError("Для правки зоны откройте рецепт, введите запрос и задайте время поиска")
@@ -258,6 +267,11 @@ def export(args, progress=None):
         for field in ("size","detail","relief","foliage","gilding","window_scan","window_material","painting","style"):
             setattr(args,field,None)
         args.no_scan=False
+    requested_carving = None if scoped else getattr(args,"carving_pct",None)
+    carving_pct = settings.get("carving_pct") if requested_carving is None else requested_carving
+    if not scoped and getattr(args,"classic_carving",False):
+        carving_pct = None
+    carving_fraction(carving_pct)
     dense=getattr(args,"dense",False) or bool(budget)
     ultra=getattr(args,"ultra",False) or dense
     style = args.style or (plan["style"] if plan else "random" if ultra else "bavarian")
@@ -272,6 +286,7 @@ def export(args, progress=None):
             relief=args.relief if args.relief is not None else settings.get("relief",1.3),
             foliage_delta=args.foliage if args.foliage is not None else settings.get("foliage_delta",0),
             gilding_delta=args.gilding if args.gilding is not None else settings.get("gilding_delta",0),
+            carving_pct=carving_pct,
             painting=args.painting if getattr(args,"painting",None) is not None else settings.get("painting",True)))
         if scoped and src.parent!=obj.parent and settings.get("window_scan"):
             scan=(src.parent/settings["window_scan"]).resolve()
@@ -306,7 +321,8 @@ def export(args, progress=None):
                 if candidate not in history:history.append(candidate)
         targeted_size=tuple(args.size or settings.get("size_m",(12,8.5,6.8)))
         plan=search_hall(args.prompt,style,args.seed,plan,budget,history,progress,args.backend,targeted_size,
-                         finish=getattr(args,"finish",None),checkpoint=checkpoint)
+                         finish=getattr(args,"finish",None),checkpoint=checkpoint,
+                         ensemble_seconds=ensemble_seconds)
         style=plan["style"]
     elif ultra and (not plan or args.prompt):
         progress("Локальный подбор композиции")
@@ -350,7 +366,7 @@ def export(args, progress=None):
     progress("Построение комнаты и объёмной лепнины")
     asset = read_window_asset(scan) if scan else None
     room = build_palace(plan,tuple(v*1000 for v in size),detail,depth,foliage,gold,
-                        window_asset=bool(asset),painting=painting_geom)
+                        window_asset=bool(asset),painting=painting_geom,carving_pct=carving_pct)
     if asset:
         place_window_asset(room,asset,material)
     if obj.suffix.lower() != ".obj":
@@ -390,13 +406,15 @@ def export(args, progress=None):
             shutil.copyfile(asset_path,staging/target.name)
             outputs.insert(0,target)
             maps[key]=target.name
-        write_materials(staging/mtl.name,ROOM_PALETTES[style],maps)
+        write_materials(staging/mtl.name,palace_palette(style,carving_pct is not None),maps)
         saved = dict(plan,export=dict(size_m=size,detail=detail,relief=depth,
-                    foliage_delta=foliage,gilding_delta=gold,window_scan=scan_ref,
+                    foliage_delta=foliage,gilding_delta=gold,carving_pct=carving_pct,window_scan=scan_ref,
                     window_material=material,window_instances=len(room.windows),painting=bool(requested),
                     painting_texture=texture.name if texture else None,
                     painting_textures=maps,
                     vertices=counts[0],triangles=counts[1]))
+        if carving_pct is not None:
+            saved["export"]["carved_pieces"]=room.carved_pieces
         (staging/recipe.name).write_text(json.dumps(saved,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
         _commit(staging,outputs)
     if checkpoint_written:
@@ -409,6 +427,8 @@ def main():
     parser.add_argument("--out",type=Path,default=Path("room.obj"),help="Путь к OBJ. Рядом сохраняются MTL и JSON.")
     parser.add_argument("--recipe",type=Path,help="Сохранённый рецепт комнаты в JSON.")
     parser.add_argument("--prompt",help="Описание комнаты или правка проекта с --recipe.")
+    parser.add_argument("--ensemble-seconds",type=int,
+                        help="Включить поиск объёмной композиции и выделить ему указанное число секунд.")
     parser.add_argument("--scope",choices=("hall","ceiling","portal"),default="hall",
                         help="При правке рецепта ограничивает изменения потолком или лепниной над дверью.")
     parser.add_argument("--backend",choices=("rules","native"),default="rules",
@@ -425,6 +445,10 @@ def main():
     parser.add_argument("--relief",type=float,help="Коэффициент глубины 0.35–2.")
     parser.add_argument("--foliage",type=float,help="Поправка количества листвы от -1 до 1.")
     parser.add_argument("--gilding",type=float,help="Поправка позолоты от -1 до 1.")
+    carving=parser.add_mutually_exclusive_group()
+    carving.add_argument("--carving",dest="carving_pct",type=float,
+                         help="Резной зал с влиянием формулы 0–100 %.")
+    carving.add_argument("--classic-carving",action="store_true",help="Прежняя геометрия лепнины.")
     group=parser.add_mutually_exclusive_group()
     group.add_argument("--no-paint",dest="painting",action="store_false",help="Лепной мотив вместо живописи на центральном поле.")
     group.add_argument("--paint",dest="painting",action="store_true",help="Роспись центрального поля из комплектного fresco.jpg.")

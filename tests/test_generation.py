@@ -9,6 +9,7 @@ from palace_free import read_recipe
 from palace_plan import _palace_check_intent
 from palace_room import build_palace
 from palace_search import edit_hall_zone, hall_history_item, search_hall
+from palace_ensemble import ensemble_plan
 
 
 SIZE_M = (8, 6.5, 4.6)
@@ -108,6 +109,30 @@ class GenerationTests(unittest.TestCase):
         before, after = mesh(self.base), mesh(edited)
         self.assertEqual({k: v for k, v in before.parts.items() if k[0] != CROWN},
                          {k: v for k, v in after.parts.items() if k[0] != CROWN})
+
+    def test_ensemble_rebuilds_the_architecture_and_roundtrips(self):
+        base = dict(self.base, prompt="Сделай парные колонны. Оставь углы потолка пустыми.")
+        spec = {"family":"axial","wings":4,"bays":4,"volutes":12,"reach":.60,
+                "crown":.47,"drop":.17,"relief":.83,"branch":.80}
+        plan = recipe_roundtrip(ensemble_plan(base, spec))
+        self.assertEqual(plan["architecture"]["walls"], "pilasters")
+        self.assertEqual(plan["wall_bays"], 4)
+        self.assertEqual(plan["ensemble"], spec)
+        self.assertEqual(len(plan["layout"]), 5)
+        _palace_check_intent(plan, base["prompt"])
+        model = mesh(plan)
+        self.assertTrue(any(zone=="Плафон · Пространственная резная рама" for zone, _ in model.parts))
+        self.assertEqual(model.parts[("Паркет","walnut")], mesh(base).parts[("Паркет","walnut")])
+
+    def test_ensemble_search_is_a_separate_budget(self):
+        reports = []
+        plan = search_hall(seed=2026, backend="rules", size_m=SIZE_M, budget=3600,
+                           ensemble_seconds=1, checkpoint=reports.append)
+        self.assertEqual(plan["search"]["ensemble_budget_s"], 1)
+        self.assertGreaterEqual(plan["search"]["elapsed_s"], 1)
+        self.assertGreater(plan["search"]["ensemble_valid"], 1)
+        self.assertEqual(plan["search"]["stop"], "ensemble_complete")
+        self.assertIn("ensemble", reports[-1])
 
 
 if __name__ == "__main__":

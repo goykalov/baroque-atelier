@@ -21,6 +21,7 @@ if "_palace_compile" not in globals():
     from palace_architecture import ARCH_WALLS, ARCH_CEILINGS, ARCH_LABELS, HALL_SECTIONS
     from palace_art import assign_palace_paintings
     from palace_refinement import refinement_checked, refine_hall
+    from palace_ensemble import search_ensemble
 
 
 HALL_LAYOUTS=("radial","procession","diagonal","islands","banded","cross")
@@ -460,10 +461,28 @@ def _search_hall_baseline(prompt,style,seed,previous,budget,history,progress,bac
 
 
 def search_hall(prompt="",style="random",seed=None,previous=None,budget=60,history=(),
-                progress=None,backend="native",size_m=None,finish=None,checkpoint=None,scope="hall"):
+                progress=None,backend="native",size_m=None,finish=None,checkpoint=None,scope="hall",
+                ensemble_seconds=None):
     """Use the same composition in every preset, then spend extra time on its geometry."""
     if budget not in HALL_BUDGETS:
         raise ValueError("Выберите 1, 10 или 60 минут")
+    if ensemble_seconds is not None:
+        if scope!="hall" or not 1<=ensemble_seconds<=3600:
+            raise ValueError("Объёмная композиция доступна для целого зала с бюджетом 1–3600 секунд")
+        finish=finish or (lambda:False)
+        progress=progress or (lambda message:None)
+        started=time.monotonic()
+        base=_search_hall_baseline(prompt,style,seed,previous,60,history,progress,backend,
+                                   size_m,finish,checkpoint,scope)
+        progress("Сравнение объёмных рам и рельефа")
+        result=search_ensemble(base,size_m or (12,8.5,6.8),time.monotonic()+ensemble_seconds,
+                               progress,finish,checkpoint or (lambda plan:None))
+        result["search"].update(ensemble_budget_s=ensemble_seconds,
+                                elapsed_s=round(time.monotonic()-started,2),
+                                stop="accepted_early" if finish() else ("ensemble_complete" if result.get("ensemble") else "ensemble_fallback"))
+        if checkpoint:
+            checkpoint(result)
+        return result
     if budget==60:
         return _search_hall_baseline(prompt,style,seed,previous,budget,history,progress,backend,
                                      size_m,finish,checkpoint,scope)

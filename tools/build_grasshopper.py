@@ -19,7 +19,7 @@ from Grasshopper.Kernel.Special import GH_BooleanToggle, GH_ButtonObject, GH_Gro
 
 tool_dir = os.path.dirname(os.path.abspath(__file__))
 root = os.path.join(os.path.dirname(tool_dir), "atelier")
-path = os.path.join(root, "Atelier.gh")
+path = os.environ.get("BAROQUE_GH_OUTPUT", os.path.join(root, "Atelier.gh"))
 report = {}
 
 
@@ -74,7 +74,8 @@ def build():
     prompt = panel("Задание (можно оставить пустым)", "", 55, 55, 410, 92)
     school = menu("Школа", schools, 55, 184)
     backend = menu("Режим", [("Qwen без сети", "native"), ("Автономные правила", "rules")], 55, 232)
-    trials = menu("Время поиска", [("До 1 минуты","60"),("До 10 минут","600"),("До 1 часа","3600")],55,278)
+    trials = menu("Время поиска", [("До 1 минуты","60"),("3 этапа лепки","600"),("6 этапов лепки","3600"),
+                  ("Объёмный поиск · 5 мин","ensemble_300"),("Объёмный поиск · 60 мин","ensemble_3600")],55,278)
     fresh = add(GH_ButtonObject(), "Найти новый зал", 55, 328)
     stop = add(GH_ButtonObject(), "Сохранить найденное", 290, 328)
     target = menu("Зона правки", [("Только потолок","ceiling"),("Лепнина над дверью","portal")], 55, 381)
@@ -88,7 +89,8 @@ def build():
     )
     planning = "\n".join(("_PALACE_ARCHITECTURE_RELEASE=True", script,
                           source("palace_auto.py"), source("palace_architecture.py"),
-                          source("palace_art.py"), source("palace_refinement.py"), source("palace_search.py"),
+                          source("palace_art.py"), source("palace_ornament.py"), source("palace_branching.py"),
+                          source("palace_refinement.py"), source("palace_ensemble.py"), source("palace_search.py"),
                           source("palace_controller.py")))
     author = python_node(doc, "Композиция зала", planning,
                           list(zip(("prompt","style","backend","trials","fresh","plan_length","plan_width","plan_height",
@@ -100,7 +102,7 @@ def build():
     items = [("archive", archive)]
     sliders = [
         ("length_mm","Длина зала, мм",12000,3400,18000), ("width_mm","Ширина зала, мм",8500,3400,18000),
-        ("height_mm","Высота зала, мм",6800,2700,8000), ("detail","Детализация",3,1,3),
+        ("height_mm","Высота зала, мм",6800,2700,8000), ("detail","Детализация",2,1,3),
         ("depth","Высота рельефа, %",115,35,200), ("leaves","Поправка густоты листвы, %",0,-100,100),
         ("gold","Поправка позолоты, %",0,-100,100),
     ]
@@ -114,17 +116,21 @@ def build():
     room.Hidden = scan.Hidden = True
     view = add(GH_ButtonObject(), "Вид из зала", 867, 539)
     paint = add(GH_BooleanToggle(), "Живопись на потолке", 867, 586)
-    paint.Value = True
+    paint.Value = False
     growth = dial(doc, "Разрастание ветвей, %", 100, 45, 160, 420, 591)
     levels = menu("Уровни ветвления", [("Глубина ветвления · авто", "auto"), ("3 уровня", "3"), ("4 уровня", "4")], 420, 640)
+    carved = add(GH_BooleanToggle(), "Резной зал", 867, 634)
+    carved.Value = True
+    influence = dial(doc, "Влияние формулы, %", 40, 0, 100, 420, 688)
     items.extend([("room",room),("scan_input",scan),("view",view),("painting",paint),
-                  ("growth_pct",growth),("branch_levels",levels)])
+                  ("growth_pct",growth),("branch_levels",levels),("carved",carved),("carving_pct",influence)])
     group("Параметры зала и лепнины", (114, 152, 139), *[obj for _, obj in items[1:]])
 
     with open(os.path.join(tool_dir, "PalaceBuffers.dll"), "rb") as f:
         buffers = base64.b64encode(f.read()).decode()
     geom = "\n".join(("import json", "_PALACE_ARCHITECTURE_RELEASE=True", "PALACE_DLL=" + repr(buffers), *(source(n) for n in (
-        "palace_ornament.py", "palace_branching.py", "palace_refinement.py", "palace_room.py", "palace_enrichment.py", "palace_sculpture.py",
+        "palace_ornament.py", "palace_branching.py", "palace_carving.py", "palace_refinement.py", "palace_ensemble.py",
+        "palace_room.py", "palace_enrichment.py", "palace_sculpture.py",
         "palace_dense_walls.py", "palace_dense_ceiling.py", "palace_architecture.py", "palace_art.py", "palace_rhino.py", "palace_display.py",
     ))))
     display = python_node(doc, "Архитектура и резьба в Rhino", geom, items, "status", 687, 797, True)

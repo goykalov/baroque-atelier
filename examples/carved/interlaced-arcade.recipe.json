@@ -1,0 +1,238 @@
+{
+  "version": 1,
+  "style": "bavarian",
+  "seed": 287384,
+  "source": "architecture_qwen",
+  "title": "Аркада · лучистое переплетение",
+  "layout": [
+    {
+      "shape": "oval",
+      "motif": "vine",
+      "elements": [
+        "rosette",
+        "scroll",
+        "spray"
+      ],
+      "id": "p1_1",
+      "x": -0.7125,
+      "y": 0.0,
+      "rx": 0.218,
+      "ry": 0.908
+    },
+    {
+      "shape": "lobed",
+      "motif": "shell",
+      "elements": [
+        "rosette",
+        "scroll",
+        "spray",
+        "shell"
+      ],
+      "id": "p1_2",
+      "x": 0.0,
+      "y": 0.0,
+      "rx": 0.448,
+      "ry": 0.908
+    },
+    {
+      "shape": "lobed",
+      "motif": "flower",
+      "elements": [
+        "rosette",
+        "scroll",
+        "spray",
+        "beads"
+      ],
+      "id": "p1_3",
+      "x": 0.7125,
+      "y": 0.0,
+      "rx": 0.218,
+      "ry": 0.908
+    }
+  ],
+  "curl": 0.8,
+  "foliage": 0.61,
+  "gilding": 0.34,
+  "wall_bays": 3,
+  "wall_rhythm": "alternating",
+  "wall_shape": "lobed",
+  "wall_motif": "shell",
+  "wall_elements": [
+    "shell",
+    "scroll",
+    "spray"
+  ],
+  "program": {
+    "title": "Баварский рокайль · 287384",
+    "curl": 0.8,
+    "foliage": 0.61,
+    "gilding": 0.34,
+    "wall_bays": 3,
+    "wall_rhythm": "alternating",
+    "wall": {
+      "shape": "lobed",
+      "motif": "shell",
+      "elements": [
+        "shell",
+        "scroll",
+        "spray"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "lobed",
+        "motif": "shell",
+        "elements": [
+          "rosette",
+          "scroll",
+          "spray",
+          "shell"
+        ]
+      },
+      "B": {
+        "shape": "oval",
+        "motif": "vine",
+        "elements": [
+          "rosette",
+          "scroll",
+          "spray"
+        ]
+      },
+      "C": {
+        "shape": "lobed",
+        "motif": "flower",
+        "elements": [
+          "rosette",
+          "scroll",
+          "spray",
+          "beads"
+        ]
+      }
+    },
+    "axis": "y",
+    "bands": [
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "B"
+          },
+          {
+            "weight": 2,
+            "type": "A"
+          },
+          {
+            "weight": 1,
+            "type": "C"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Баварский парадный зал, аркады и парные колонны. Три поля. В центре потолка большая ветвящаяся розетка из глубокого аканта, два выразительных боковых плафона. Волюты переходят с резного карниза на свод. Умеренная позолота, матовый камень.",
+  "attempts": 1,
+  "export": {
+    "size_m": [
+      12.0,
+      8.5,
+      6.8
+    ],
+    "detail": 2,
+    "relief": 1.22,
+    "foliage_delta": 0.2,
+    "gilding_delta": 0,
+    "carving_pct": 68.0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": false,
+    "painting_texture": null,
+    "painting_textures": {},
+    "vertices": 5388814,
+    "triangles": 10683871,
+    "carved_pieces": 21752
+  },
+  "interpretation": [
+    "полей 3"
+  ],
+  "ultra": {
+    "paint": true,
+    "capital": "shell",
+    "pilaster": "fluted",
+    "tiers": 3,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 1.18,
+    "order": 4,
+    "rhythm": 0.6
+  },
+  "input_seed": 73571,
+  "search": {
+    "budget_s": 60,
+    "elapsed_s": 31.23,
+    "procedural_drafts": 27,
+    "valid_recipes": 29,
+    "ai_passes": 2,
+    "selected": "architecture_qwen",
+    "score": 0.698567,
+    "stop": "completed_passes",
+    "trace": [
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "swept",
+          "layout": "procession",
+          "bays": 3
+        },
+        "comment": "Изменил расположение арок и колонн для создания симметрии и акцента на центральном потолке.",
+        "score": 0.698567,
+        "seconds": 17.52
+      },
+      {
+        "phase": "structure",
+        "local_model": "Qwen3 8B",
+        "architecture": {
+          "walls": "arcade",
+          "ceiling": "star",
+          "section": "vertical",
+          "layout": "cross",
+          "bays": 4
+        },
+        "comment": "Изменение на центральное пересечение (cross) с аркадами и звездчатым потолком для создания гармоничного баланса и глубины пространства.",
+        "score": 0.678516,
+        "seconds": 13.6
+      }
+    ]
+  },
+  "pattern": "procession",
+  "paintings": {
+    "p1_1": "monarchy",
+    "p1_3": "planets"
+  },
+  "zone_tuning": {
+    "wall": {
+      "curl": 0.8,
+      "foliage": 0.61,
+      "gilding": 0.34
+    },
+    "ceiling": {
+      "curl": 0.8,
+      "foliage": 0.61,
+      "gilding": 0.34
+    }
+  },
+  "architecture": {
+    "walls": "arcade",
+    "ceiling": "star",
+    "order": 4,
+    "section": "swept",
+    "reach": 0.85,
+    "asymmetry": 0.6
+  }
+}

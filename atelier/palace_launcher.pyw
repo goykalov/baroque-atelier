@@ -22,7 +22,8 @@ ENGINES = {"Локальная Qwen":"native", "Автономные прави�
 if not native_available():
     ENGINES.pop("Локальная Qwen")
 QUALITIES = {"Эскиз":1,"Проработка":2,"Тонкая резьба":3}
-BUDGETS={"До 1 минуты":60,"До 10 минут":600,"До 1 часа":3600}
+BUDGETS={"До 1 минуты":60,"3 этапа лепки":600,"6 этапов лепки":3600}
+ENSEMBLE_PRESETS={"Объёмный поиск · 5 мин":300,"Объёмный поиск · 60 мин":3600}
 SCOPES={"Весь зал":"hall","Только потолок":"ceiling","Лепнина над дверью":"portal"}
 def _key(mapping,value):
     return next((k for k,v in mapping.items() if v==value),next(iter(mapping)))
@@ -54,7 +55,7 @@ class Workshop:
         form.rowconfigure(6,weight=1)
         self.school = tk.StringVar(value=next(iter(SCHOOLS)))
         self.engine = tk.StringVar(value=next(iter(ENGINES)))
-        self.quality = tk.StringVar(value="Тонкая резьба")
+        self.quality = tk.StringVar(value="Проработка" if self.atelier else "Тонкая резьба")
         self.drafts = tk.IntVar(value=2)
         self.budget=tk.StringVar(value=next(iter(BUDGETS)))
         self.scope=tk.StringVar(value=next(iter(SCOPES)))
@@ -63,7 +64,9 @@ class Workshop:
         self.tuning = [tk.StringVar(value=x) for x in ("1,3","0","0")]
         self.folder = tk.StringVar(value=str(Path(__file__).resolve().parent/("Ателье · мои залы" if self.atelier else "Мои залы")))
         self.scan = tk.StringVar()
-        self.painting = tk.BooleanVar(value=True)
+        self.painting = tk.BooleanVar(value=not self.atelier)
+        self.carved = tk.BooleanVar(value=self.atelier)
+        self.carving_pct = tk.IntVar(value=40)
         self.project_title = tk.StringVar(value="Новый проект")
         self.status = tk.StringVar(value="Готово к работе")
         self.advanced=tk.BooleanVar(value=False)
@@ -114,13 +117,22 @@ class Workshop:
             bar=ttk.Frame(form)
             bar.grid(row=13,column=0,columnspan=3,sticky="ew",pady=(8,2))
             ttk.Label(bar,text="Время поиска").pack(side="left",padx=(0,7))
-            ttk.Combobox(bar,textvariable=self.budget,values=tuple(BUDGETS),state="readonly",width=17).pack(side="left")
+            ttk.Combobox(bar,textvariable=self.budget,values=(*BUDGETS,*ENSEMBLE_PRESETS),
+                         state="readonly",width=24).pack(side="left")
             self.finish_button=ttk.Button(bar,text="Сохранить найденное",command=self.finish_search,state="disabled")
             self.finish_button.pack(side="right")
             zone_bar=ttk.Frame(form)
             zone_bar.grid(row=14,column=0,columnspan=3,sticky="ew",pady=(4,1))
             ttk.Label(zone_bar,text="Зона правки").pack(side="left",padx=(0,7))
             ttk.Combobox(zone_bar,textvariable=self.scope,values=tuple(SCOPES),state="readonly",width=22).pack(side="left")
+            self.rebuild_button=ttk.Button(zone_bar,text="Пересобрать рецепт",command=lambda:self.start(False, replay=True),state="disabled")
+            self.rebuild_button.pack(side="right")
+            carving_bar=ttk.Frame(form)
+            carving_bar.grid(row=15,column=0,columnspan=3,sticky="ew",pady=(3,0))
+            ttk.Checkbutton(carving_bar,text="Резной зал",variable=self.carved).pack(side="left",padx=(0,10))
+            ttk.Label(carving_bar,text="Влияние формулы, %").pack(side="left")
+            tk.Scale(carving_bar,variable=self.carving_pct,from_=0,to=100,orient="horizontal",
+                     highlightthickness=0,length=198).pack(side="left",padx=6)
         self.bar=ttk.Progressbar(form,mode="indeterminate")
         self.bar.grid(row=11,column=0,columnspan=3,sticky="ew",pady=(7,2))
         ttk.Label(form,textvariable=self.status,wraplength=670).grid(row=12,column=0,columnspan=3,sticky="w")
@@ -187,9 +199,14 @@ class Workshop:
         self.project=path
         self.project_title.set("Открытый проект · "+plan["title"])
         self.edit_button.configure(state="normal")
+        if self.atelier:
+            self.rebuild_button.configure(state="normal")
         if restore:
             self.school.set(_key(SCHOOLS,plan["style"]))
             opts=plan.get("export",{})
+            strength=opts.get("carving_pct")
+            self.carved.set(strength is not None)
+            self.carving_pct.set(round(strength) if strength is not None else 40)
             self.painting.set(opts.get("painting",True))
             self.quality.set(_key(QUALITIES,opts.get("detail",2)))
             for field,v in zip(self.size,opts.get("size_m",(9,6.7,4.9))):
@@ -202,7 +219,7 @@ class Workshop:
             self.seed.set("")
         return plan
 
-    def arguments(self,edit):
+    def arguments(self,edit,replay=False):
         prompt=self.prompt.get("1.0","end").strip()
         size=tuple(_number(v.get()) for v in self.size)
         depth,foliage,gilt=(_number(v.get()) for v in self.tuning)
@@ -216,29 +233,39 @@ class Workshop:
             raise ValueError("Сначала откройте рецепт комнаты.")
         if edit and not prompt:
             raise ValueError("Введите правку в поле описания.")
-        seed=int(self.seed.get()) if self.seed.get().strip() else (None if edit else secrets.randbelow(2147483647))
+        ensemble_seconds=ENSEMBLE_PRESETS.get(self.budget.get()) if self.atelier else None
+        if edit and ensemble_seconds:
+            raise ValueError("Объёмный поиск создаёт целый зал. Для правки зоны выберите обычное время поиска.")
+        if replay and not self.project:
+            raise ValueError("Сначала откройте рецепт комнаты.")
+        seed=None if replay else int(self.seed.get()) if self.seed.get().strip() else (None if edit else secrets.randbelow(2147483647))
         style=SCHOOLS[self.school.get()]
         stamp=datetime.now().strftime("%Y%m%d-%H%M%S")
         path=Path(self.folder.get()).expanduser()/f"{style}-{stamp}-{uuid4().hex[:8]}.obj"
-        return argparse.Namespace(out=path,recipe=self.project if edit else None,prompt=prompt,backend=ENGINES[self.engine.get()],
-            drafts=self.drafts.get(),style=style,seed=seed,size=size,detail=QUALITIES[self.quality.get()],
+        return argparse.Namespace(out=path,recipe=self.project if edit or replay else None,
+            prompt="" if replay else prompt,backend=ENGINES[self.engine.get()],
+            drafts=self.drafts.get(),style=None if replay else style,seed=seed,size=size,detail=QUALITIES[self.quality.get()],
             relief=depth,foliage=foliage,gilding=gilt,window_scan=Path(self.scan.get()) if self.scan.get() else None,
             no_scan=not bool(self.scan.get()),window_material=None,painting=self.painting.get(),
             ultra=True,dense=self.dense,avoid=self.project if not edit else None,
-            budget=BUDGETS[self.budget.get()] if self.atelier else None,finish=self.finish_event.is_set,
+            budget=BUDGETS.get(self.budget.get(),3600) if self.atelier and not replay else None,finish=self.finish_event.is_set,
+            ensemble_seconds=None if replay else ensemble_seconds,
+            carving_pct=self.carving_pct.get() if self.carved.get() else None,
+            classic_carving=not self.carved.get(),
             scope=SCOPES[self.scope.get()] if edit and self.atelier else "hall")
 
-    def start(self,edit):
+    def start(self,edit,replay=False):
         if self.busy:
             return
         try:
-            args=self.arguments(edit)
+            args=self.arguments(edit,replay)
         except (tk.TclError,ValueError,OSError) as exc:
             messagebox.showerror("Параметры комнаты",str(exc),parent=self.root)
             return
         self.busy=True
         self.finish_event.clear()
         if self.atelier:self.finish_button.configure(state="normal")
+        if self.atelier:self.rebuild_button.configure(state="disabled")
         for button in (self.open_button,self.new_button,self.edit_button):
             button.configure(state="disabled")
         self.bar.start(27)
@@ -266,6 +293,7 @@ class Workshop:
             for button in (self.open_button,self.new_button):
                 button.configure(state="normal")
             self.edit_button.configure(state="normal" if self.project else "disabled")
+            if self.atelier:self.rebuild_button.configure(state="normal" if self.project else "disabled")
             if kind=="error":
                 self.status.set("Сборка остановлена. Предыдущий вариант сохранён.")
                 messagebox.showerror("Сборка комнаты",payload,parent=self.root)
@@ -274,11 +302,17 @@ class Workshop:
                 plan=self.use_recipe(path.with_suffix(".recipe.json"),restore=False)
                 selected=plan.get("search",{}).get("selected",plan["source"])
                 ceiling=plan.get("zones",{}).get("ceiling",plan)
+                strength=plan.get("export",{}).get("carving_pct")
+                self.carved.set(strength is not None)
+                if strength is not None:
+                    self.carving_pct.set(round(strength))
                 source={"native":"Qwen","architecture_qwen":"композиция Qwen","architecture_rules":"автономная композиция","procedural_random":"случайная композиция",
                         "procedural_prompt":"автономные правила"}.get(selected,selected)
                 layers=plan.get("search",{}).get("geometry_passes",0)
                 layers_text=f" · слоёв рельефа {layers}" if layers else ""
-                self.status.set(f"Сохранён {path.name} · полей {len(ceiling['layout'])} · {source}{layers_text} · {counts[1]:,} треугольников".replace(","," "))
+                report=plan.get("search",{})
+                note=" · ограничения не позволили построить большой плафон" if report.get("stop")=="ensemble_fallback" else ""
+                self.status.set(f"Сохранён {path.name} · полей {len(ceiling['layout'])} · {source}{layers_text} · {counts[1]:,} треугольников{note}".replace(","," "))
         if self.busy:
             self.root.after(120,self.poll)
 

@@ -14,6 +14,8 @@ parser.add_argument("--detail", action="store_true")
 parser.add_argument("--ceiling", action="store_true")
 parser.add_argument("--opposite", action="store_true")
 parser.add_argument("--editorial", action="store_true")
+parser.add_argument("--clay", action="store_true", help="Neutral material for comparing the geometry.")
+parser.add_argument("--raking-light", action="store_true", help="Raking light for carved surfaces.")
 parser.add_argument("--cpu", action="store_true")
 parser.add_argument("--width", type=int, help="Horizontal image size in pixels.")
 parser.add_argument("--samples", type=int, help="Maximum number of Cycles samples.")
@@ -92,6 +94,13 @@ def finish_material(mat):
         tree.links.new(gloss.outputs[0], mixt.inputs[2])
         tree.links.new(mixt.outputs[0],out.inputs["Surface"])
         return
+    if options.clay:
+        base.default_value = (.53,.51,.48,1)
+        shader.inputs["Roughness"].default_value = .68
+        for node in list(tree.nodes):
+            if node.type=="TEX_IMAGE":
+                tree.nodes.remove(node)
+        return
     if tag == "gold":
         base.default_value = (.70,.43,.14,1)
         shader.inputs["Metallic"].default_value = .93
@@ -138,7 +147,7 @@ for material in bpy.data.materials:
 world = bpy.data.worlds.new("Diffuse daylight")
 world.use_nodes = True
 world.node_tree.nodes["Background"].inputs["Color"].default_value = (.91,.94,1,1)
-world.node_tree.nodes["Background"].inputs["Strength"].default_value = .32
+world.node_tree.nodes["Background"].inputs["Strength"].default_value = .16 if options.raking_light else .32
 scene.world = world
 
 
@@ -162,11 +171,16 @@ for index, (lo, hi) in enumerate(glazing, 1):
     aperture, opening_height = hi[0] - lo[0], hi[2] - lo[2]
     # Place a soft emitter immediately outside each actual opening.
     light("Daylight · " + str(index), (x, y-.1, z), (x, cy, z+.32),
-          52*aperture*opening_height, max(.22, aperture*.96), opening_height*.92, (.93,.95,1.))
+          (34 if options.raking_light else 52)*aperture*opening_height,
+          max(.22, aperture*.96), opening_height*.92, (.93,.95,1.))
 light("Warm indirect return", position(.39,.16,.51), position(-.30,-.17,.73),
-      (45 if options.editorial else 72)*length*width/60, width*.37, height*.27, (1,.865,.70))
+      (24 if options.raking_light else 45 if options.editorial else 72)*length*width/60,
+      width*.37, height*.27, (1,.865,.70))
+if options.raking_light:
+    light("Window-side ceiling bounce", position(.04,-.38,.62), position(-.14,.4,.99),
+          125*length*width/100, width*.32, .28, (.96,.94,.90))
 sun_data = bpy.data.lights.new("Late daylight", "SUN")
-sun_data.color = (1,.872,.73)
+sun_data.color = (1,.959,.912) if options.raking_light else (1,.872,.73)
 sun_data.energy = 2.21 if options.editorial else 1.60
 sun_data.angle = .034 if options.editorial else .085
 sun = bpy.data.objects.new("Late daylight",sun_data)
@@ -179,10 +193,13 @@ scene.collection.objects.link(camera)
 scene.camera = camera
 side = 1 if options.opposite else -1
 if options.ceiling:
-    camera.location=position(0,0,.20)
+    camera.location=position(0,0,.38 if options.raking_light else .20)
     camera.rotation_euler=(math.pi,0,0)
     camera_data.type="ORTHO"
-    camera_data.ortho_scale=max(length,width/.691)*1.04
+    camera_data.ortho_scale=max(length,width/.691)*(.965 if options.raking_light else 1.04)
+    if options.raking_light:
+        for obj in meshes:
+            obj.visible_camera=obj.name.startswith(("Потолок","Плафон"))
 elif options.detail:
     camera.location = position(.27,side*.32,.43)
     point_at(camera,position(-.23,-side*.33,.965))

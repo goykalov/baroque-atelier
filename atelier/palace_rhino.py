@@ -39,6 +39,7 @@ def room_meshes(raw,style,placement,scan=None,painting_path=None):
     if assembly is None:assembly=System.Reflection.Assembly.Load(System.Convert.FromBase64String(PALACE_DLL))
     make=assembly.GetType("PalaceBuffers").GetMethod("MeshFromBuffers")
     meshes=[];materials=[];keys=[]
+    palette=palace_palette(style,raw.carving is not None)
     textures=painting_path if isinstance(painting_path,dict) else {"fresco":painting_path}
     def add(m,zone,mat):
         painted=mat.startswith("fresco")
@@ -50,7 +51,7 @@ def room_meshes(raw,style,placement,scan=None,painting_path=None):
                 m.TextureCoordinates.Add(u,v)
         m.Transform(placement)
         if not m.IsValid:raise ValueError("Некорректная сетка · "+zone+" / "+mat)
-        col=Color.FromArgb(*( (255,255,255) if painted and textures.get(mat) else ROOM_PALETTES[style][mat] ))
+        col=Color.FromArgb(*( (255,255,255) if painted and textures.get(mat) else palette[mat] ))
         material=Rhino.Display.DisplayMaterial(col)
         if textures.get(mat):material.SetBitmapTexture(str(textures[mat]),True)
         material.Shine=75 if mat=="gold" else 18

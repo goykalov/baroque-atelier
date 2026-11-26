@@ -39,7 +39,8 @@ def display_room():
     else:
         painted=paint_enabled and os.path.isfile(picture)
         textures={"fresco":picture} if painted else {}
-    settings = (active, size, str(placement), int(float(detail)), float(depth), float(leaves),
+    carving = float(carving_pct) if str(globals().get("carved",False)).lower()=="true" else None
+    settings = (active, size, str(placement), int(float(detail)), float(depth), float(leaves),carving,
                 float(gold), scan.DataCRC(0) if scan is not None else None,
                 [(k,str(p),os.path.getmtime(p)) for k,p in textures.items()])
     stamp = hashlib.sha256(json.dumps(settings, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
@@ -47,7 +48,7 @@ def display_room():
     cache = sc.sticky.get(key)
     if cache is None or cache[0] != stamp:
         built = build_palace(active, size, int(float(detail)), float(depth)/100, float(leaves)/100,
-                            float(gold)/100, scan is not None, painted)
+                            float(gold)/100, scan is not None, painted, carving_pct=carving)
         meshes = room_meshes(built, active["style"], placement, scan, textures)
         publish_palace(rd, owner, stamp, meshes, textures)
         count = sum(mesh.Faces.Count for mesh in meshes[0])
@@ -57,7 +58,8 @@ def display_room():
     if str(view).lower() == "true":
         palace_camera(rd, size, placement)
     count = sc.sticky[key][1]
-    return "{} · {} полей · {:,} треугольников".format(active["title"], len(ceiling["layout"]), count).replace(",", " ")
+    finish = "" if carving is None else " · формула "+str(round(carving))+" %"
+    return "{} · {} полей · {:,} треугольников{}".format(active["title"], len(ceiling["layout"]), count, finish).replace(",", " ")
 
 
 try:

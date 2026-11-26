@@ -8,26 +8,32 @@
 
 ## Try the preview
 
-1. Download **baroque-atelier-v0.3.0-windows.zip** from the [v0.3.0 release](https://github.com/goykalov/baroque-atelier/releases/tag/v0.3.0) and extract it.
-2. Launch **atelier/Start Atelier.cmd** for the standalone Windows interface. It uses Python 3.9+ with Tcl/Tk. For Rhino 9, open **atelier/Atelier.gh** in Grasshopper.
-3. Select a search budget and click **Найти новый зал**. A blank brief is enough. The interface currently uses Russian.
+1. [Download the current project as a ZIP](https://github.com/goykalov/baroque-atelier/archive/refs/heads/main.zip) and extract it.
+2. In Rhino 9, open [Atelier-Carved.gh](atelier/Atelier-Carved.gh) in Grasshopper. For the standalone Windows interface, launch **atelier/Start Atelier.cmd** with Python 3.9+ and Tcl/Tk installed.
+3. Select **Автономные правила** (local rules), choose a search preset and click **Найти новый зал** (find a new hall). A blank brief is enough. The interface uses Russian.
 
-The Windows archive includes llama.cpp. For offline Qwen search, place **Qwen3 8B GGUF** at **atelier/models/qwen3-8b.gguf** or set **BAROQUE_MODEL_PATH**. The tool can also find an existing Ollama **qwen3:8b** weight file and open it directly in llama.cpp. The standalone **Автономные правила** mode works without model weights. [Qwen3 8B GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF)
+For offline Qwen search, copy the **atelier/engine** folder from the [v0.3.0 Windows release](https://github.com/goykalov/baroque-atelier/releases/tag/v0.3.0) into the current project or point **BAROQUE_LLAMA_BIN** to a local **llama-completion.exe**. Put [Qwen3 8B GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF) at **atelier/models/qwen3-8b.gguf** or set **BAROQUE_MODEL_PATH**. The tool can also open existing Ollama **qwen3:8b** weights directly in llama.cpp. Then select **Qwen без сети** (offline Qwen).
+
+## Carved hall
+
+The new mode builds branching plaster relief across the ceiling, walls, friezes, and dado. Acanthus grows out of the panel mouldings. The **Влияние формулы, %** slider changes how strongly recursive branching and interlacing shape the relief. The new mode uses plaster and wood finishes without gilding.
 
 ## What you can control
 
 - Room length, width, and height, or a rectangular closed room volume in Grasshopper.
 - A new combination of wall structure, bay count, wall cross-section, ceiling volume, and field layout at each search. The search compares recent architecture and spatial layouts.
-- Recursive acanthus relief, ornament depth, foliage, gilding, and museum paintings placed as ceiling textures.
-- Three generation budgets. **1 minute** selects the base composition. **10 minutes** can add carved ceiling accents, dado panels, and sculpture brackets. **1 hour** can add a second series of carved frames, friezes, and sculpture groups over the same room. The budgets are upper limits. Use **Сохранить найденное** to finish with the completed stages.
+- Ornament depth, foliage, branching, and optional museum paintings as ceiling textures. The classic mode also offers a gilding control.
+- Quick composition search, three or six refinement stages, and experimental **5- or 60-minute volume searches** that compare vault geometries and ceiling layouts. Use **Сохранить найденное** to finish with the best result so far. Preparation and final export add to the volume search time.
 - Prompt-driven edits to the **ceiling** or **relief above the door**. Choose a zone and click **Применить правку**. The other parts keep their geometry. In Rhino, matching parts also keep their object IDs.
 
 In the Windows app, open a saved recipe before editing. The current project supplies the dimensions and mesh settings for zone edits. During a search, the exporter saves a recoverable `.checkpoint.json` beside the target OBJ and removes it after a successful export.
 
 ## Gallery
 
-Six halls generated locally at the same **12 × 8.5 × 6.8 m** dimensions. Each frame starts from exported 3D geometry rendered in Blender Cycles, with photographic finishing in ImageGen. [Full-size views and generation recipes](docs/SHOWCASE.md)
+Ten studies of three carved halls at the same **12 × 8.5 × 6.8 m** dimensions. The white series shows the relief in plaster. The colour series explores restrained mineral finishes. Blender Cycles renders of the local geometry were used as the source for lighting and material finishing in ImageGen. [Full-size views and generation recipes](docs/SHOWCASE.md)
+
+[![Carved plaster hall with daylight across the walls and parquet](docs/showcase/carved/02-white-plaster-salon.jpg)](docs/SHOWCASE.md)
 
 ## Project status
 
-This is a Windows and Rhino 9 design preview. The output is polygonal concept geometry. All three presets were exercised with local Qwen. Detailed exports can be large. The original project code currently has no open-source license specified. The museum assets and third-party runtime have separate terms. [Attribution](docs/ATTRIBUTION.md)
+This is a Windows and Rhino 9 design preview. The output is polygonal concept geometry. The main carved hall has about 10.7 million triangles at its gallery settings. The original project code currently has no open-source license specified. The museum assets and third-party runtime have separate terms. [Attribution](docs/ATTRIBUTION.md)

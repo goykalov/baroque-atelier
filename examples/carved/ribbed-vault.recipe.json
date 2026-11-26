@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "style": "bavarian",
+  "seed": 144110,
+  "source": "architecture_rules",
+  "title": "Балдахины · ребристый свод",
+  "layout": [
+    {
+      "shape": "oval",
+      "motif": "vine",
+      "elements": [
+        "rosette",
+        "scroll",
+        "spray"
+      ],
+      "id": "p1_1",
+      "x": -0.316667,
+      "y": -0.475,
+      "rx": 0.601333,
+      "ry": 0.448
+    },
+    {
+      "shape": "oval",
+      "motif": "vine",
+      "elements": [
+        "rosette",
+        "scroll",
+        "spray"
+      ],
+      "id": "p1_2",
+      "x": -0.316667,
+      "y": 0.475,
+      "rx": 0.601333,
+      "ry": 0.448
+    },
+    {
+      "shape": "lobed",
+      "motif": "shell",
+      "elements": [
+        "rosette",
+        "scroll",
+        "spray",
+        "shell"
+      ],
+      "id": "p2_1",
+      "x": 0.633333,
+      "y": 0.0,
+      "rx": 0.294667,
+      "ry": 0.908
+    }
+  ],
+  "curl": 0.8,
+  "foliage": 0.61,
+  "gilding": 0.34,
+  "wall_bays": 6,
+  "wall_rhythm": "alternating",
+  "wall_shape": "lobed",
+  "wall_motif": "shell",
+  "wall_elements": [
+    "shell",
+    "scroll",
+    "spray"
+  ],
+  "program": {
+    "title": "Баварский рокайль · 144110",
+    "curl": 0.8,
+    "foliage": 0.61,
+    "gilding": 0.34,
+    "wall_bays": 6,
+    "wall_rhythm": "alternating",
+    "wall": {
+      "shape": "lobed",
+      "motif": "shell",
+      "elements": [
+        "shell",
+        "scroll",
+        "spray"
+      ]
+    },
+    "palette": {
+      "A": {
+        "shape": "lobed",
+        "motif": "shell",
+        "elements": [
+          "rosette",
+          "scroll",
+          "spray",
+          "shell"
+        ]
+      },
+      "B": {
+        "shape": "oval",
+        "motif": "vine",
+        "elements": [
+          "rosette",
+          "scroll",
+          "spray"
+        ]
+      },
+      "C": {
+        "shape": "lobed",
+        "motif": "flower",
+        "elements": [
+          "rosette",
+          "scroll",
+          "spray",
+          "beads"
+        ]
+      }
+    },
+    "axis": "x",
+    "bands": [
+      {
+        "weight": 2,
+        "cells": [
+          {
+            "weight": 1,
+            "type": "B"
+          },
+          {
+            "weight": 1,
+            "type": "B"
+          }
+        ]
+      },
+      {
+        "weight": 1,
+        "cells": [
+          {
+            "weight": 2,
+            "type": "A"
+          }
+        ]
+      }
+    ]
+  },
+  "prompt": "Баварский парадный зал, аркады и парные колонны. Три поля. В центре потолка большая ветвящаяся розетка из глубокого аканта, два выразительных боковых плафона. Волюты переходят с резного карниза на свод. Умеренная позолота, матовый камень.",
+  "attempts": 1,
+  "export": {
+    "size_m": [
+      12.0,
+      8.5,
+      6.8
+    ],
+    "detail": 1,
+    "relief": 1.22,
+    "foliage_delta": 0.2,
+    "gilding_delta": 0,
+    "carving_pct": 81.0,
+    "window_scan": null,
+    "window_material": "plaster",
+    "window_instances": 0,
+    "painting": false,
+    "painting_texture": null,
+    "painting_textures": {},
+    "vertices": 5222333,
+    "triangles": 10336590,
+    "carved_pieces": 25498
+  },
+  "interpretation": [
+    "полей 3"
+  ],
+  "ultra": {
+    "paint": true,
+    "capital": "acanthus",
+    "pilaster": "ribbed",
+    "tiers": 3,
+    "lace": "spray",
+    "gold": true
+  },
+  "dense": {
+    "growth": 0.99,
+    "order": 4,
+    "rhythm": 0.81
+  },
+  "input_seed": 17406,
+  "search": {
+    "budget_s": 60,
+    "elapsed_s": 0.08,
+    "procedural_drafts": 27,
+    "valid_recipes": 27,
+    "ai_passes": 0,
+    "selected": "architecture_rules",
+    "score": 0.714963,
+    "stop": "rules_only",
+    "trace": []
+  },
+  "pattern": "diagonal",
+  "paintings": {
+    "p1_1": "counsel"
+  },
+  "zone_tuning": {
+    "wall": {
+      "curl": 0.8,
+      "foliage": 0.61,
+      "gilding": 0.34
+    },
+    "ceiling": {
+      "curl": 0.8,
+      "foliage": 0.61,
+      "gilding": 0.34
+    }
+  },
+  "architecture": {
+    "walls": "canopy",
+    "ceiling": "rib_vault",
+    "order": 4,
+    "section": "swept",
+    "reach": 0.77,
+    "asymmetry": 0.81
+  }
+}

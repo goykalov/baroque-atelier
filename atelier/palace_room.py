@@ -4,6 +4,8 @@ from array import array
 if "decorate_panel" not in globals():
     from palace_ornament import decorate_panel, _PalacePanel
     from palace_refinement import add_refined_ceiling, add_refined_portal, add_refined_walls
+    from palace_ensemble import add_ensemble_ceiling
+    from palace_carving import carve_wall_bay, carving_fraction
 
 
 ROOM_PALETTES = {
@@ -17,16 +19,30 @@ ROOM_PALETTES = {
 for _pal in ROOM_PALETTES.values():
     _pal.update(wood=(124, 82, 52), oak=(153, 109, 69), walnut=(104, 70, 46), glass=(194, 216, 220),fresco=(227,214,191))
 
+def palace_palette(style, carved=False):
+    palette=ROOM_PALETTES[style]
+    if not carved:
+        return palette
+    ground={"bavarian":(181,178,170),"russian":(158,170,169),"mexican":(169,155,146)}[style]
+    material=dict(palette,body=(210,207,199),plaster=(233,230,222),ground=ground,
+                  accent=(188,184,175),shadow=(150,147,139),
+                  wood=(101,72,56),oak=(123,93,73),walnut=(80,57,46))
+    material.pop("gold")
+    return material
+
 
 class RoomMeshes:
     """Compact indexed triangles, grouped by architectural part and material."""
-    def __init__(self, gilded=True):
+    def __init__(self, gilded=True, carving=None, foliage_delta=0.):
         self.parts = {}
         self.windows = []
         self.gilded=gilded
+        self.carving=carving
+        self.carved_pieces=0
+        self.foliage_delta=foliage_delta
 
     def mesh(self, material, zone, vertices, faces):
-        if material=="gold" and not self.gilded:material="plaster"
+        if material=="gold" and (not self.gilded or self.carving is not None):material="plaster"
         key = (zone, material)
         if key not in self.parts:
             self.parts[key] = (array("f"), array("i"))
@@ -95,6 +111,13 @@ def _room_mould(g, mat, zone, frame, path, r, depth, loop=False):
 
 
 def _room_cove(g,zone,frame,span,H,R,s,style):
+    if g.carving is not None:
+        # A full projecting cornice carries the upper frieze into the cove.
+        spring=H-R
+        section=((-39,0),(-39,36),(-25,36),(-25,80),(-9,80),(-9,135),
+                 (14,135),(33,109),(48,69),(69,47),(78,14),(78,0))
+        _room_sweep(g,"plaster",zone,frame,
+                    [[(x,spring+y*s,z*s) for y,z in section] for x in (-span/2,span/2)])
     for i in range(16):
         t0=math.pi*.5*i/16
         t1=math.pi*.5*(i+1)/16
@@ -207,18 +230,21 @@ def _room_floor(g,L,W):
                           y0+c*W/ny+1,y0+d*W/ny-1,0,4)
 
 
-def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta=0., gilding_delta=0., window_asset=False, painting=True):
+def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta=0., gilding_delta=0., window_asset=False, painting=True, *, carving_pct=None):
     L,W,H=(float(x) for x in size)
     if not (3400<=min(L,W)<=max(L,W)<=18000 and 2700<=H<=8000):
         raise ValueError("Размер зала должен быть 3,4–18 м по плану и 2,7–8 м по высоте")
     s=min(H/4900,min(L,W)/6200,1.45)
     ultra=plan.get("ultra")
-    g=RoomMeshes(gilded=ultra is None or ultra["gold"]); style=plan["style"]
+    carving=carving_fraction(carving_pct)
+    g=RoomMeshes(gilded=ultra is None or ultra["gold"],carving=carving,
+                 foliage_delta=foliage_delta); style=plan["style"]
     zones=plan.get("zones",{})
     ceiling=zones.get("ceiling",plan)
     portal=zones.get("portal")
     ceiling_ultra=ceiling.get("ultra")
-    roof=g if ceiling is plan else RoomMeshes(gilded=ceiling_ultra is None or ceiling_ultra["gold"])
+    roof=g if ceiling is plan else RoomMeshes(gilded=ceiling_ultra is None or ceiling_ultra["gold"],
+                                             carving=carving,foliage_delta=foliage_delta)
     detail=max(1,min(3,int(detail)))
     depth=max(.35,min(2.,float(relief)))
     def tuning(zone, source):
@@ -273,7 +299,7 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
             sub=zone+" "+str(j+1)
             if i==0:
                 _room_arch(g,sub,f,x,bay,H,s,window_asset)
-                if ultra and detail>=2:
+                if ultra and detail>=2 and carving is None:
                     crest=_PalacePanel(g,sub,_room_offset(f,x,H*.805,26*s),1000,1000,style,
                                        min(2,detail),depth,plan["seed"]+j*43,recipe)
                     reach=min(bay*.19,235*s)
@@ -304,7 +330,7 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
                     panel_depth=max(.35,min(2., depth*portal["relief"]))
                     decorate_panel(g,"Портал · лепнина над дверью",_room_offset(f,x,H*.777),panel_width,H*.16,
                                    style,detail,panel_depth,portal["seed"],field)
-                    if portal.get("refinement"):
+                    if portal.get("refinement") and carving is None:
                         add_refined_portal(g,portal,f,x,H*.777,panel_width,H*.16,style,detail,depth,field)
                 else:
                     field=dict(recipe,shape="lobed",motif=plan["wall_motif"],elements=plan["wall_elements"])
@@ -322,6 +348,8 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
                     prop=(prop[0],prop[1]*.78,min(.38,prop[2]))
                 elif section=="swept":
                     prop=(min(.90,prop[0]*1.10),prop[1]*.88,prop[2]+(.018 if j%2 else -.018))
+                if carving is not None and feature in ("canopy","grotto"):
+                    field["carving_crown"]=(feature, H*(.797-prop[2]-.448*prop[1]))
                 decorate_panel(g,sub,_room_offset(f,x,H*prop[2]),bay*prop[0],H*prop[1],
                                style,detail,depth,plan["seed"]+i*19+j%2,field)
             if i!=3 or j!=n//2:
@@ -332,7 +360,17 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
                 for y,h,z,mat in ((H*.012,24,28,"plaster"),(H*.183,25,36,"plaster"),(H*.193,6,37,"gold")):
                     _room_box(g,mat,sub,f,cursor,end,y,y+h*s,0,z*s)
             # Festoons follow the architectural bay, linking the springing points and crest.
-            if detail>=2 and recipe["foliage"]>.18:
+            if carving is not None:
+                lower,upper=H*.813,H-R-24*s
+                if upper-lower>45*s:
+                    carve_wall_bay(g,sub+" · резной фриз",f,x,bay,lower,upper,depth,
+                                   recipe["foliage"],carving,plan["seed"]+17*i+41*min(j,n-1-j),detail)
+                if i!=3 or j!=n//2:
+                    carve_wall_bay(g,sub+" · резной цоколь",
+                                   _room_offset(f,0,0,6*s),x,bay*.81,H*.066,H*.142,
+                                   depth*.70,recipe["foliage"],carving,
+                                   plan["seed"]+31*i+41*min(j,n-1-j),detail)
+            elif detail>=2 and recipe["foliage"]>.18:
                 band=_PalacePanel(g,sub,_room_offset(f,x,H*.855,12*s),1120.,1000.,style,detail,depth,
                                   plan["seed"]+3*j,recipe)
                 bw=bay*.42; hang=min(H*.060,bw*.34)
@@ -352,12 +390,12 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
             if j: _room_pier(g,zone+" · пилястры",f,cursor,bay,H,s,style,depth)
             cursor=end
         _room_cove(g,zone+" · падуга",f,span,H,R,s,style)
-    if ultra:
+    if ultra and carving is None:
         if "enrich_room" in globals():enrich=globals()["enrich_room"]
         else:
             from palace_enrichment import enrich_room as enrich
         enrich(g,plan,(L,W,H),detail,depth,frames,roof=roof,ceiling=ceiling)
-    elif roof is not g and ceiling_ultra and detail>=2:
+    elif carving is None and roof is not g and ceiling_ultra and detail>=2:
         if "_enrich_ceiling" in globals():
             enrich_ceiling=globals()["_enrich_ceiling"]
         else:
@@ -369,19 +407,21 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
             from palace_dense_ceiling import dense_ceiling as add_ceiling
         else:
             add_walls,add_ceiling=dense_walls,dense_ceiling
-        if plan.get("dense"):
+        if plan.get("dense") and carving is None:
             add_walls(g,plan,(L,W,H),detail,depth,frames)
-        if ceiling.get("dense"):
+        if ceiling.get("dense") and carving is None:
             add_ceiling(roof,ceiling,(L,W,H),detail,depth,painted_ids)
         if detail>=2 and plan.get("dense") and plan["dense"].get("figures",True):
             if "place_palace_sculptures" in globals():statues=place_palace_sculptures
             else:
                 from palace_sculpture import place_palace_sculptures as statues
             statues(g,plan,(L,W,H),frames)
-    if plan.get("refinement"):
+    if plan.get("refinement") and carving is None:
         add_refined_walls(g,plan,(L,W,H),detail,depth,frames)
-    if ceiling.get("refinement"):
+    if ceiling.get("refinement") and carving is None:
         add_refined_ceiling(roof,ceiling,(L,W,H),detail,depth)
+    if ceiling.get("ensemble") and carving is None:
+        add_ensemble_ceiling(roof,ceiling,(L,W,H),detail,depth)
     if plan.get("architecture") or ceiling.get("architecture"):
         if "build_architecture" in globals():architecture=build_architecture
         else:
@@ -389,4 +429,5 @@ def build_palace(plan, size=(9000,6700,4900), detail=2, relief=1., foliage_delta
         architecture(g,plan,(L,W,H),detail,depth,frames,painted_ids,roof=roof,ceiling=ceiling)
     if roof is not g:
         g.parts.update(roof.parts)
+        g.carved_pieces+=roof.carved_pieces
     return g

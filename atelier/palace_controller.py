@@ -22,7 +22,9 @@ if (start_new or start_edit) and not state["busy"]:
     text, engine, school = str(prompt or "").strip(), str(backend), str(style)
     atelier=bool(globals().get("_PALACE_ARCHITECTURE_RELEASE"))
     state_json=json.loads(saved)
-    count=int(float(trials))
+    preset=str(trials)
+    ensemble_seconds=int(preset.split("_",1)[1]) if preset.startswith("ensemble_") else None
+    count=3600 if ensemble_seconds else int(float(trials))
     history=state_json.get("history",[]) if atelier else []
     if atelier and previous:
         history=(history+[hall_history_item(previous)])[-12:]
@@ -40,8 +42,10 @@ if (start_new or start_edit) and not state["busy"]:
                 options=dict(budget=count,backend=engine,size_m=measurements,finish=finish_signal.is_set,
                              progress=lambda msg:outcome.update(progress=msg))
                 if target=="hall":
-                    outcome["plan"]=search_hall(text,school,history=history,**options)
+                    outcome["plan"]=search_hall(text,school,history=history,ensemble_seconds=ensemble_seconds,**options)
                 else:
+                    if ensemble_seconds:
+                        raise ValueError("Для правки зоны выберите обычный режим генерации")
                     if previous is None:
                         raise ValueError("Сначала создайте зал кнопкой «Найти новый зал»")
                     outcome["plan"]=edit_hall_zone(previous,target,text,**options)
@@ -83,6 +87,10 @@ if (start_new or start_edit) and not state["busy"]:
                     state["message"]+=" · Qwen: "+str(report["ai_passes"])+" проходов"
                     if report.get("geometry_passes"):
                         state["message"]+=" · слоёв рельефа: "+str(report["geometry_passes"])
+                    if report.get("ensemble_valid"):
+                        state["message"]+=" · проверено рам: "+str(report["ensemble_valid"])
+                    if report.get("stop")=="ensemble_fallback":
+                        state["message"]+=" · ограничения не позволили построить большой плафон"
             except Exception as error:
                 state["message"] = "Ошибка · " + str(error)
             state["busy"] = False

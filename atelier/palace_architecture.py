@@ -40,15 +40,23 @@ def _architecture_ring(g, mat, zone, f, x, y, z, radial, levels, flutes=0, twist
     _architecture_imports()["_room_sweep"](g,mat,zone,f,rows)
 
 
-def _architecture_column(g,zone,f,x,z,height,radius,kind):
+def _architecture_column(g,zone,f,x,z,height,radius,kind,detail=2):
     r=radius
     _architecture_ring(g,"plaster",zone,f,x,0,z,r,[(0,1.55),(.21*r,1.55),(.38*r,1.42),(.55*r,1.25),(r,1.15)])
     _architecture_ring(g,"gold",zone,f,x,.8*r,z,r,[(0,1.16),(.21*r,1.23),(.42*r,1.05)])
     levels=[(r+(height-2.8*r)*j/24,1+.10*math.sin(math.pi*j/24)-.23*j/24) for j in range(25)]
     twist=math.tau*2.8 if kind=="twist" else 0
     _architecture_ring(g,"plaster",zone,f,x,0,z,r,levels,12,twist)
-    _architecture_ring(g,"gold",zone,f,x,height-1.95*r,z,r,
-                       [(0,.78),(.24*r,.90),(.51*r,.94),(.75*r,1.24),(1.15*r,1.13),(1.25*r,1.49),(1.69*r,1.49),(1.95*r,1.55)])
+    crown=[(0,.78),(.24*r,.90),(.51*r,.94),(.75*r,1.24),(1.15*r,1.13),
+           (1.25*r,1.49),(1.69*r,1.49),(1.95*r,1.55)]
+    base=height-1.95*r
+    _architecture_ring(g,"gold",zone,f,x,base,z,r,crown)
+    if g.carving is not None:
+        if "carve_capital" in globals():
+            sculpt=carve_capital
+        else:
+            from palace_carving import carve_capital as sculpt
+        sculpt(g,zone,f,x,z,base,r,crown,g.carving,detail)
 
 
 def _architecture_wall(g,plan,size,detail,relief,frames,rng):
@@ -59,6 +67,7 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
     s=min(H/4900,min(L,W)/6200,1.45)
     reach=arch["reach"]; hand=arch["asymmetry"]
     section=arch.get("section")
+    ensemble=plan.get("ensemble")
     kind=arch["walls"]
     material="plaster" if style=="bavarian" else "gold"
     recipe={k:plan[k] for k in ("curl","foliage","gilding")}
@@ -94,17 +103,37 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
                 top=gallery_height-52*s if kind=="gallery" else H*(.66 if portal else .62+.075*reach)+standing_height
                 depth=min(450*s,.13*wide)*(.52+.48*reach)
                 radius=min(118*s,bay_width*.09)
+                if ensemble and not portal and kind!="gallery":
+                    top=H*(.684+.047*ensemble["crown"])+standing_height
+                    depth=min(780*s,.23*wide)*(.74+.26*ensemble["relief"])
+                    radius=min(167*s,bay_width*.124)
                 for side in (-1,1):
                     x1=x+side*bay_width*.5
-                    _architecture_column(g,zone,f,x1,depth,top,radius,"twist" if kind=="pilasters" else "fluted")
-                    if kind=="pilasters" and wide>1200*s and not portal:
-                        _architecture_column(g,zone,f,x1-side*2.38*radius,depth*.62,top*.96,radius*.72,"fluted")
-                if kind=="arcade" and not portal:
+                    _architecture_column(g,zone,f,x1,depth,top,radius,"twist" if kind=="pilasters" else "fluted",detail)
+                    if kind=="pilasters" and wide>1200*s and not portal and not ensemble:
+                        _architecture_column(g,zone,f,x1-side*2.38*radius,depth*.62,top*.96,radius*.72,"fluted",detail)
+                if ensemble and not portal and kind!="gallery":
+                    # The pediment joins the paired shafts into a projecting three-dimensional bay.
+                    sweep=min(H*.101,bay_width*.42)
+                    for factor,mat in ((1.0,"shadow"),(.965,"plaster"),(.918,"gold"),(.888,"plaster")):
+                        line=[(x+.53*bay_width*factor*math.cos(math.pi*t/48),
+                               top+sweep*factor*math.sin(math.pi*t/48)+12*s,
+                               depth+(44.-144.*(1-factor))*s)
+                              for t in range(49)]
+                        mould(g,mat,zone,f,line,{"shadow":59,"plaster":34,"gold":15}[mat]*s,26*s)
+                elif kind=="arcade" and not portal:
                     for r,adj,c in ((.94,25,"shadow"),(1.,29,"plaster"),(1.07,12,"gold"),(1.12,7,"plaster")):
                         line=[(x+.5*bay_width*r*math.cos(math.pi*k/48),
                                top+min(.5*bay_width,H*.13)*r*math.sin(math.pi*k/48),depth+adj*s)
                               for k in range(49)]
                         mould(g,c,zone,f,line,adj*s,adj*s)
+                    if g.carving is not None:
+                        if "carve_arch" in globals():
+                            sculpt=carve_arch
+                        else:
+                            from palace_carving import carve_arch as sculpt
+                        sculpt(g,zone,f,x,top,bay_width*.53,min(.5*bay_width,H*.13)*1.06,
+                               depth+39*s,detail,g.carving,salt)
                 elif kind=="pilasters" and not portal:
                     for height,thick,c in ((0,34,"plaster"),(35,14,"gold"),(59,19,"plaster")):
                         mould(g,c,zone,f,[(x-bay_width*.56,top+height*s,depth),
@@ -124,6 +153,10 @@ def _architecture_wall(g,plan,size,detail,relief,frames,rng):
                          for t in (u0,u1)])
                 draw_box(g,"gold",zone,f,x-rx*1.14,x+rx*1.14,lo-45*s,lo,0,z*.88)
             elif kind in ("canopy","grotto"):
+                if g.carving is not None:
+                    # The carved version grows a crown from the actual panel
+                    # profile in carve_field.
+                    continue
                 ax=min(wide*.39,720*s); ay=H*(.50+.05*reach)+standing_height
                 span_y=H*(.21+.04*reach)
                 projection=min(440*s,.16*wide)
@@ -201,9 +234,16 @@ def _architecture_ceiling(g,plan,size,detail,relief,painted):
     spec=plan["architecture"]; name=spec["ceiling"]
     n,q,skew=spec["order"],spec["reach"],spec["asymmetry"]
     drop=min(H*.175,b*.24,680.)*q
+    ensemble=plan.get("ensemble")
     ceiling_zone="Потолок · "+ARCH_LABELS[name]
     def elevation(x,y):
         u,v=x/a,y/b
+        if ensemble:
+            ux,vy=abs(u)**5,abs(v)**5
+            edge=max(0.,ux+vy-ux*vy)**.2
+            cove=math.sin(min(1.,max(0.,(edge-.52)/.48))*math.pi*.5)**1.42
+            # The vault rises at the painted centre and turns down into the deep perimeter cove.
+            return H*ensemble["drop"]*cove
         border=max(0,min(1,(1-max(abs(u),abs(v)))/.17))
         if name=="star":
             radius=math.hypot(u,v)
@@ -267,13 +307,33 @@ def _architecture_ceiling(g,plan,size,detail,relief,painted):
     # Deep ribs separate painted areas. Their inner paths move from one composition to the next.
     R=min(H*.115,min(a,b)*.15)
     boxes=[(p["x"]*(a-R),p["y"]*(b-R),p["rx"]*(a-R),p["ry"]*(b-R)) for p in plan["layout"]]
+    framed=[]
+    if g.carving is not None:
+        if "_palace_inside" in globals():
+            inside_field=_palace_inside
+        else:
+            from palace_ornament import _palace_inside as inside_field
+        border=105.
+        framed=[dict(p,rx=p["rx"]+border/(.896*(a-R)),ry=p["ry"]+border/(.896*(b-R)))
+                for p in plan["layout"]]
     text=str(plan.get("prompt","")).lower()
     protect_center=bool(re.search(r"(?:пуст|свобод|чист)\w*[^.!]{0,16}(?:центр|серед)|(?:центр|серед)\w*[^.!]{0,25}(?:пуст|свобод|чист)",text))
     protect_corners=bool(re.search(r"(?:пуст|свобод|чист)\w*[^.!]{0,16}угл|угл\w*[^.!]{0,25}(?:пуст|свобод|чист)",text))
     def clear(x,y):
         if protect_center and abs(x)<.19*a and abs(y)<.19*b:return False
         if protect_corners and abs(x)>.61*a and abs(y)>.61*b:return False
+        if framed:
+            return not any(inside_field(p,x/(a-R),y/(b-R)) for p in framed)
         return all(abs(x-x0)>rx*.92+55 or abs(y-y0)>ry*.92+55 for x0,y0,rx,ry in boxes)
+    if g.carving is not None:
+        if "carve_vault" in globals():
+            sculpt=carve_vault
+        else:
+            from palace_carving import carve_vault as sculpt
+        sculpt(g,ceiling_zone+" · резной свод",
+               lambda x,y,z:model(x,y,slab_height(x,y)+z),
+               size,plan,detail,relief,g.carving,clear)
+        return
     for k in range(-n,n+1):
         if k==0 and name!="woven":continue
         path=[]; spans=[]

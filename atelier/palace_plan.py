@@ -170,27 +170,8 @@ def _palace_clear_corners(text):
     return bool(re.search(r"(?:пуст\w*|свободн\w*|чист\w*)\s+(?:(?:четыре|все)\s+)?угл\w*|угл\w*\s+(?:(?:потолка|комнаты|зала|остав\w*|будут|должны|быть)\s+){0,3}(?:пуст\w*|свободн\w*|чист\w*)|(?:очист\w*|освободи\w*)\s+(?:все\s+)?угл\w*", text))
 
 
-def _palace_inside(panel, x, y):
-    # Same outline equations as the raised plates in palace_ornament.panel_outline.
-    u = (x-panel["x"]) / (.896*panel["rx"])
-    v = (y-panel["y"]) / (.896*panel["ry"])
-    if max(abs(u), abs(v)) > 1.001:
-        return False
-    shape = panel["shape"]
-    if shape == "oval":
-        return u*u + v*v <= 1
-    if shape == "octagon":
-        return abs(u) + abs(v) <= 1.62
-    if shape == "lobed":
-        angle = math.atan2(v, u)
-        r = (1 + .095*math.cos(4*angle) - .043*math.cos(8*angle)) / 1.055
-        return u*u + v*v <= r*r
-    if shape == "arch":
-        v -= .24
-        if v >= 0:
-            return u*u + (v/.76)**2 <= 1
-        return abs(u)**(2/.46) + abs(v/1.24)**(2/.46) <= 1
-    return abs(u)**(2/.36) + abs(v)**(2/.36) <= 1
+if "_PALACE_ARCHITECTURE_RELEASE" not in globals():
+    from palace_ornament import _palace_inside
 
 
 def _palace_mask(plan):
