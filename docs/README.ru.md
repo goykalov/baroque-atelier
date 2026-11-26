@@ -2,6 +2,8 @@
 
 Ателье генерирует разные пространственные композиции внутри заданного прямоугольного объёма. Варианты отличаются системой опор, формой свода, потолочными полями и ветвящейся резьбой. Размеры задаёт дизайнер.
 
+[Галерея](SHOWCASE.md) · [План развития](../ROADMAP.md) · [Вики](https://github.com/goykalov/baroque-atelier/wiki) · [Обсуждения](https://github.com/goykalov/baroque-atelier/discussions) · [Задачи](https://github.com/goykalov/baroque-atelier/issues)
+
 ## Запуск
 
 1. [Скачайте актуальный проект в ZIP](https://github.com/goykalov/baroque-atelier/archive/refs/heads/main.zip) и распакуйте его.
